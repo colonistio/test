@@ -9,9 +9,11 @@
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/resize.js"></script>
 	<script type="text/javascript" src="js/pad.js"></script>
+	<script type="text/javascript" src="js/ball.js"></script>
 	<script type="text/javascript">
 		let player1 = new Pad('player1', 10, app.height / 2 - 50, 'w', 's');
 		let player2 = new Pad('player2', app.width - 30, app.height / 2 - 50, 'ArrowUp', 'ArrowDown');
+		let ball = new Ball('ball', app.width / 2 - 5, app.height / 2 - 5);
 
 		app.onInit = function(){
 			// add nodes
@@ -26,11 +28,13 @@
 
 			this.nodes.push(player1);
 			this.nodes.push(player2);
+			this.nodes.push(ball);
 		};
 
 		app.onUpdate = function(time){
 			player1.update(time);
 			player2.update(time);
+			ball.update(time);
 		};
 	</script>
 </body>
