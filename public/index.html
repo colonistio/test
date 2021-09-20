@@ -8,7 +8,11 @@
 	<canvas id="canvas"></canvas>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/resize.js"></script>
+	<script type="text/javascript" src="js/pad.js"></script>
 	<script type="text/javascript">
+		let player1 = new Pad('player1', 10, app.height / 2 - 50, 'w', 's');
+		let player2 = new Pad('player2', app.width - 30, app.height / 2 - 50, 'ArrowUp', 'ArrowDown');
+
 		app.onInit = function(){
 			// add nodes
 			this.nodes.push({
@@ -20,37 +24,13 @@
 				color  : 'black',
 			});
 
-			this.nodes.push({
-				id : 'player1',
-				x  : 10,
-				y  : app.height / 2 - 50,
-				width  : 20,
-				height : 100,
-				color  : 'black',
-				direction : 0
-			});
-
-			this.nodes.push({
-				id : 'player2',
-				x  : app.width - 30,
-				y  : app.height / 2 - 50,
-				width  : 20,
-				height : 100,
-				color  : 'black',
-				direction : 0
-			});
+			this.nodes.push(player1);
+			this.nodes.push(player2);
 		};
 
 		app.onUpdate = function(time){
-			this.getNode('black-box').y++;
-
-			if(Math.cos(this.timestamp / 100) > 0){
-				this.getNode('red-box').direction = -1;
-			}else{
-				this.getNode('red-box').direction = 1;
-			}
-
-			this.getNode('red-box').x+=this.getNode('red-box').direction;
+			player1.update(time);
+			player2.update(time);
 		};
 	</script>
 </body>
