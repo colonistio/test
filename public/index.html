@@ -11,10 +11,6 @@
 	<script type="text/javascript" src="js/pad.js"></script>
 	<script type="text/javascript" src="js/ball.js"></script>
 	<script type="text/javascript">
-		let player1 = new Pad('player1', 10, app.height / 2 - 50, 'w', 's');
-		let player2 = new Pad('player2', app.width - 30, app.height / 2 - 50, 'ArrowUp', 'ArrowDown');
-		let ball = new Ball('ball', app.width / 2 - 5, app.height / 2 - 5);
-
 		app.restartMatch = function() {
 			ball.resetPosition();
 			player1.resetPosition();
@@ -22,6 +18,20 @@
 		}
 
 		app.onInit = function(){
+			app.reset();
+			app.initialised = true;
+		};
+
+		// pause toggle function
+		app.togglePause = function() {
+			app.paused = !app.paused;
+			console.log(`Game paused: ${app.paused}`);
+		}
+
+		// reset function
+		app.reset = function() {
+			this.nodes = [];
+
 			// add nodes
 			this.nodes.push({
 				id : 'midline',
@@ -48,25 +58,31 @@
 				color  : 'black',
 			});
 
+			player1 = new Pad('player1', 10, app.height / 2 - 50, 'w', 's');
+			player2 = new Pad('player2', app.width - 30, app.height / 2 - 50, 'ArrowUp', 'ArrowDown');
+			ball = new Ball('ball', app.width / 2 - 5, app.height / 2 - 5);
+
 			this.nodes.push(player1);
 			this.nodes.push(player2);
 			this.nodes.push(ball);
-		};
 
-		// pause toggle function
-		app.togglePause = function() {
-			app.paused = !app.paused;
-			console.log(`Game paused: ${app.paused}`);
+			console.log('Game reset...');
 		}
 
-		// add pause / resume key binding
+		// add app key bindings
 		window.addEventListener("keyup", function(event) {
 			if (event.code === 'Space') {
 				app.togglePause();
+			} else if (event.key === 'r') {
+				app.reset();
 			}
 		});
 
 		app.onUpdate = function(time){
+			if (!app.initialised) {
+				return;
+			}
+
 			if (!app.paused) {
 				// update
 				player1.update(time);
