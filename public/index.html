@@ -37,7 +37,24 @@
 			this.nodes.push(ball);
 		};
 
+		// pause toggle function
+		app.togglePause = function() {
+			app.paused = !app.paused;
+			console.log(`Game paused: ${app.paused}`);
+		}
+
+		// add pause / resume key binding
+		window.addEventListener("keyup", function(event) {
+			if (event.code === 'Space') {
+				app.togglePause();
+			}
+		});
+
 		app.onUpdate = function(time){
+			if (app.paused) {
+				return;
+			}
+
 			player1.update(time);
 			player2.update(time);
 			ball.update(time);
