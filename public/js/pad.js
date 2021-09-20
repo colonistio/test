@@ -73,5 +73,9 @@ class Pad {
         this.score += 1;
         console.log(`${this.id} scored! Total score: ${this.score}`);
     }
+
+    getScore() {
+        return this.score;
+    }
 }
 

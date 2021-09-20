@@ -51,13 +51,18 @@
 		});
 
 		app.onUpdate = function(time){
-			if (app.paused) {
-				return;
+			if (!app.paused) {
+				// update
+				player1.update(time);
+				player2.update(time);
+				ball.update(time);
 			}
 
-			player1.update(time);
-			player2.update(time);
-			ball.update(time);
+			// draw
+			app.context.textAlign = 'left';
+			app.context.fillText(`Score: ${player1.getScore()}`, 10, 20, app.width / 2);
+			app.context.textAlign = 'right';
+			app.context.fillText(`Score: ${player2.getScore()}`, app.width - 10, 20, app.width / 2);
 		};
 	</script>
 </body>
