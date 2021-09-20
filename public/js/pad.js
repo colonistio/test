@@ -13,7 +13,6 @@ class Pad {
         this.width = padWidth;
         this.height = padHeight;
         this.color = 'black';
-        this.direction = 0;
         this.upKey = upKey;
         this.downKey = downKey;
         this.up = false;
