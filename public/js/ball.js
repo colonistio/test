@@ -74,7 +74,7 @@ class Ball {
 
     #checkForWallBounces() {
         // bounce top and bottom walls
-        if (this.y + this.radius >= app.height || this.y - this.radius <= 0) {
+        if (this.y + this.height >= app.height || this.y <= 0) {
             this.velocityY = -this.velocityY;
         }
 
