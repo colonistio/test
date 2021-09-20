@@ -8,18 +8,23 @@ const ballSize = 10;
 class Ball {
     constructor(id, x, y) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.startX = x;
+        this.startY = y;
         this.width = ballSize;
         this.height = ballSize;
         this.radius = ballSize / 2;
         this.color = 'black';
+        this.resetPosition();
+    }
+
+    resetPosition() {
+        this.x = this.startX;
+        this.y = this.startY;
         this.speed = startSpeed;
         let angle = Math.random() * Math.PI * 2;
         this.velocityX = Math.cos(angle) * this.speed;
         this.velocityY = Math.sin(angle) * this.speed;
     }
-
 
     #move() {
         this.x += this.velocityX;
@@ -75,13 +80,13 @@ class Ball {
 
         // right side
         if (this.x > app.width) {
-            // todo: add score to player 1
-            // todo: restart match
+            app.getNode('player1').addScore();
+            app.restartMatch();
         }
         // left side
         else if (this.x + this.width < 0) {
-            // todo: add score to player 2
-            // todo: restart match
+            app.getNode('player2').addScore();
+            app.restartMatch();
         }
     }
 

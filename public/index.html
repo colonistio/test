@@ -15,6 +15,12 @@
 		let player2 = new Pad('player2', app.width - 30, app.height / 2 - 50, 'ArrowUp', 'ArrowDown');
 		let ball = new Ball('ball', app.width / 2 - 5, app.height / 2 - 5);
 
+		app.restartMatch = function() {
+			ball.resetPosition();
+			player1.resetPosition();
+			player2.resetPosition();
+		}
+
 		app.onInit = function(){
 			// add nodes
 			this.nodes.push({

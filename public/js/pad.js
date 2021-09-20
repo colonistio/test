@@ -8,17 +8,24 @@ const padHeight = 100;
 class Pad {
     constructor(id, x, y, upKey, downKey) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.startX = x;
+        this.startY = y;
         this.width = padWidth;
         this.height = padHeight;
         this.color = 'black';
         this.upKey = upKey;
         this.downKey = downKey;
-        this.up = false;
-        this.down = false;
+        this.score = 0;
+        this.resetPosition();
 
         this.#addKeyBindings();
+    }
+
+    resetPosition() {
+        this.x = this.startX;
+        this.y = this.startY;
+        this.up = false;
+        this.down = false;
     }
 
     #addKeyBindings() {
@@ -60,6 +67,11 @@ class Pad {
     update(time) {
         this.#move();
         this.#clamp();
+    }
+
+    addScore() {
+        this.score += 1;
+        console.log(`${this.id} scored! Total score: ${this.score}`);
     }
 }
 
