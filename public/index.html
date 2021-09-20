@@ -10,24 +10,34 @@
 	<script type="text/javascript" src="js/resize.js"></script>
 	<script type="text/javascript">
 		app.onInit = function(){
-			// Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
+			// add nodes
 			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
+				id : 'midline',
+				x  : app.width / 2 - 10,
 				y  : 0,
-				width  : 100,
+				width  : 20,
+				height : app.height,
+				color  : 'black',
+			});
+
+			this.nodes.push({
+				id : 'player1',
+				x  : 10,
+				y  : app.height / 2 - 50,
+				width  : 20,
 				height : 100,
-				color  : 'red',
+				color  : 'black',
 				direction : 0
 			});
 
 			this.nodes.push({
-				id : 'black-box',
-				x  : 50,
-				y  : 0,
-				width  : 150,
-				height : 150,
-				color  : 'black'
+				id : 'player2',
+				x  : app.width - 30,
+				y  : app.height / 2 - 50,
+				width  : 20,
+				height : 100,
+				color  : 'black',
+				direction : 0
 			});
 		};
 
