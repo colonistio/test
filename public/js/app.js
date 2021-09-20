@@ -39,8 +39,12 @@ var app = {
 		for(var index in this.nodes){
 			var node = this.nodes[index];
 
-			this.context.fillStyle = node.color;
-			this.context.fillRect(node.x, node.y, node.width, node.height);
+			if (typeof node.draw === 'function') {
+				node.draw(this.context);
+			} else {
+				this.context.fillStyle = node.color;
+				this.context.fillRect(node.x, node.y, node.width, node.height);
+			}
 		}
 
 		this.lastUpdate = Date.now();

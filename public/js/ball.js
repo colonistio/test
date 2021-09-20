@@ -95,5 +95,12 @@ class Ball {
         this.#checkForPaddleBounces();
         this.#checkForWallBounces();
     }
+
+    draw(context) {
+        context.beginPath();
+        context.fillStyle = this.color;
+        context.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, Math.PI * 2);
+        context.fill();
+    }
 }
 
