@@ -47,3 +47,6 @@ Please start server with ```node index.js```.
 ## Guidelines
 - Break down your commits into the smallest commit that represents a cohesive feature that is in a build-able state.
 - This is a good place to show off your architeture, clean code, modularity, extensibility knowledge.
+
+## Output ScreenShot from Mohit 
+![Getting Started](ss/Screenshot.png)
