@@ -51,5 +51,5 @@ Please start server with ```node index.js```.
 ## Output ScreenShot from Mohit 
 ![Getting Started](ss/Screenshot.png)
 
-## Changes done yet
+## Changes
 I have updated the index.html file and created an initial working prototype for your reference. I will be adding some more features as well. Just check the file and let me know if there is any change that needs to be done immediately. 
