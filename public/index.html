@@ -10,6 +10,17 @@
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 	const paddleVelocity = 20;
 
+	// sounds
+	let hit = new Audio();
+	let wall = new Audio();
+	let p1Score = new Audio();
+	let p2Score = new Audio();
+
+	hit.src = "sounds/hit.mp3";
+	wall.src = "sounds/wall.mp3";
+	p1Score.src = "sounds/comScore.mp3";
+	p2Score.src = "sounds/userScore.mp3";
+
 	const player1 = {
 		x: 0,
 		y: app.height/2 - 100/2,
@@ -134,10 +145,15 @@
 
 			if(ball.y + ball.radius > app.height || ball.y - ball.radius < 0){
         		ball.velocityY = -ball.velocityY;
+				wall.play();
     		}
 
 			let player = (ball.x < app.width/2) ? player1 : player2;
 			if(collisionDetection(ball,player)){
+				//play sound
+				hit.play();
+
+				//check whether ball hits the player paddle or not
 				let collidePoint = ball.y - (player.y + player.height/2);
 				collidePoint = collidePoint/(player.height/2);
 
@@ -156,11 +172,13 @@
 			{
 				//player 2 win
 				player2.score++;
+				p2Score.play();
 				resetBall();
 			}else if (ball.x + ball.radius > app.width)
 			{
 				//player 1 win
 				player1.score++;
+				p1Score.play();
 				resetBall();
 			} 
 		}
