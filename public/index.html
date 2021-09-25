@@ -69,7 +69,7 @@
 
 	function drawText(text,x,y,color) {
 		app.context.fillStyle = color;
-		app.context.font = "45px";
+		app.context.font = "45px fantasy";
 		app.context.fillText(text,x,y); 
 	}
 
@@ -149,7 +149,7 @@
 				ball.velocityX = dir*ball.speed * Math.cos(radAngle);
 				ball.velocityY = ball.speed * Math.sin(radAngle);
 
-				ball.speed += 0.1;
+				ball.speed += 0.5;
 				//increase the paddle speed
 			}
 			if (ball.x - ball.radius < 0)
