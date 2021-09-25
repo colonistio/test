@@ -2,6 +2,9 @@
 <html>
 <head>
 	<title>Ping Pong Game</title>
+	<style type="text/css">
+		body {text-align: center;}
+	</style>
 </head>
 <body>
 	<canvas id="canvas" width="800" height="400"></canvas>
@@ -9,7 +12,63 @@
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
+		var DIRECTION = {
+			IDLE: 0,
+			UP: 1,
+			DOWN: 2,
+			LEFT: 3,
+			RIGHT: 4
+		};
+		var rounds = [5, 5, 3, 3, 2];
+		var colors = ['#1abc9c', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6'];
+
 		app.onInit = function(){
+			this.canvas.style.width = (this.canvas.width / 2) + 'px';
+			this.canvas.style.height = (this.canvas.height / 2) + 'px';
+
+			this.nodes.push({
+				id: 'paddle',
+				width: 18,
+				height: 70,
+				x: 150,
+				y: (this.canvas.height / 2) - 35,
+				score: 0,
+				move: DIRECTION.IDLE,
+				speed: 10
+			});
+
+			this.nodes.push({
+				id: 'player',
+				width: 18,
+				height: 70,
+				x: this.canvas.width - 150,
+				y: (this.canvas.height / 2) - 35,
+				score: 0,
+				move: DIRECTION.IDLE,
+				speed: 10
+			});
+
+			this.nodes.push({
+				id: 'ball',
+				width: 18,
+				height: 18,
+				x: (this.canvas.width / 2) - 9,
+				y: (this.canvas.height / 2) - 9,
+				moveX: DIRECTION.IDLE,
+				moveY: DIRECTION.IDLE,
+				speed: incrementedSpeed || 9
+			});
+
+			this.paddle = this.getNode('paddle');
+			this.player = this.getNode('player');
+			this.paddle.speed = 8;
+
+			this.running = this.over = false;
+			this.turn = this.paddle;
+			this.timer = this.round = 0;
+			this.color = '#2c3e50';
+
+/*
 			this.nodes.push({
 				id : 'red-box',
 				x  : 100,
@@ -28,9 +87,11 @@
 				height : 150,
 				color  : 'black'
 			});
+*/
 		};
 
 		app.onUpdate = function(time){
+/*
 			this.getNode('black-box').y++;
 
 			if(Math.cos(this.timestamp / 100) > 0){
@@ -40,7 +101,7 @@
 			}
 
 			this.getNode('red-box').x+=this.getNode('red-box').direction;
-		};
+*/		};
 	</script>
 </body>
 </html>
