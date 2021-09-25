@@ -21,6 +21,9 @@
 		};
 		var rounds = [5, 5, 3, 3, 2];
 		var colors = ['#1abc9c', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6'];
+		var player;
+		var paddle;
+		var ball;
 
 		app.onInit = function(){
 			this.canvas.style.width = (this.canvas.width / 2) + 'px';
@@ -56,18 +59,19 @@
 				y: (this.canvas.height / 2) - 9,
 				moveX: DIRECTION.IDLE,
 				moveY: DIRECTION.IDLE,
-				speed: incrementedSpeed || 9
+				speed: 9 // incrementedSpeed || 9
 			});
 
-			this.paddle = this.getNode('paddle');
-			this.player = this.getNode('player');
-			this.paddle.speed = 8;
+			paddle = this.getNode('paddle');
+			player = this.getNode('player');
+			paddle.speed = 8;
 
 			this.running = this.over = false;
 			this.turn = this.paddle;
 			this.timer = this.round = 0;
 			this.color = '#2c3e50';
 
+			app.listen();
 /*
 			this.nodes.push({
 				id : 'red-box',
@@ -90,7 +94,71 @@
 */
 		};
 
+		app.listen = function(){
+			document.addEventListener('keydown', function (key) {
+				if (this.running === false) {
+					this.running = true;
+					window.requestAnimationFrame(this.loop);
+				}
+				if (key.keyCode === 38 || key.keyCode === 87) player.move = DIRECTION.UP;
+				if (key.keyCode === 40 || key.keyCode === 83) player.move = DIRECTION.DOWN;
+			});
+
+			document.addEventListener('keyup', function (key) { player.move = DIRECTION.IDLE; });
+		};
+
+		app.draw = function () {
+
+			// the paddles...
+			this.context.fillStyle = '#ffffff';
+			this.context.fillRect(player.x, player.y, player.width, player.height);
+			this.context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+			// the net...
+		};
+
+		app.updateGame = function () {
+		};
+
+		app._resetTurn = function(victor, loser) {
+//			this.ball = Ball.new.call(this, this.ball.speed);
+			this.turn = loser;
+			this.timer = (new Date()).getTime();
+
+			victor.score++;
+		};
+
 		app.onUpdate = function(time){
+
+			// If the ball collides with the bound limits - correct the x and y coords.
+			if (this.getNode('ball').x <= 0) 
+				app._resetTurn.call(this, this.getNode('paddle'), this.getNode('player'));
+
+			if (this.getNode('ball').x >= this.canvas.width - this.getNode('ball').width) 
+				app._resetTurn.call(this, this.getNode('player'), this.getNode('paddle'));
+
+			if (this.getNode('ball').y <= 0) 
+				this.getNode('ball').moveY = DIRECTION.DOWN;
+
+			if (this.getNode('ball').y >= this.canvas.height - this.getNode('ball').height) 
+				this.getNode('ball').moveY = DIRECTION.UP;
+
+			if (!this.over) {
+				// Move player if they player.move value was updated by a keyboard event
+				if (this.getNode('player').move === DIRECTION.UP) 
+					this.getNode('player').y -= this.getNode('player').speed;
+				else if (this.getNode('player').move === DIRECTION.DOWN) 
+					this.getNode('player').y += this.getNode('player').speed;
+
+
+				// If the player collides with the bound limits, update the x and y coords.
+				if (this.getNode('player').y <= 0) 
+					this.getNode('player').y = 0;
+				else if (this.getNode('player').y >= (this.canvas.height - this.getNode('player').height)) 
+					this.getNode('player').y = (this.canvas.height - this.getNode('player').height);
+			}
+
+
 /*
 			this.getNode('black-box').y++;
 
