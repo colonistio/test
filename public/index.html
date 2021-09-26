@@ -6,12 +6,12 @@
 		body {text-align: center;}
 	</style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 </head>
 <body>
 
 	<canvas id="canvas" width="800" height="400"></canvas>
 
-	<script src="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/js/font-awesome.min.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
@@ -32,8 +32,10 @@
 		var ball;
 
 		app.onInit = function(){
-			this.canvas.style.width = (this.canvas.width / 2) + 'px';
-			this.canvas.style.height = (this.canvas.height / 2) + 'px';
+			this.canvas.style.width = this.canvas.width + 'px';
+			this.canvas.style.height = this.canvas.height + 'px';
+
+			this.round = 1;
 
 			this.nodes.push({
 				id: 'paddle',
@@ -63,35 +65,42 @@
 
 			this.nodes.push({
 				id: 'ball',
-				width: 20,
-				height: 20,
+				width: 48,
+				height: 48,
 				fontCode: ballCode,
 				fontColor: '#000',
+				fontSize: '48px',
 				color  : 'transparent',
 				x: (this.canvas.width / 2) - 9,
 				y: (this.canvas.height / 2) - 9,
 				moveX: DIRECTION.IDLE,
 				moveY: DIRECTION.IDLE,
-				speed: 9
+				speed: 10
 			});
-/*
-			for (var i = 9; i >= 0; i--) {
+
+			var bonusNum = Math.random() * 4;
+			for (var i = bonusNum; i >= 0; i--) {
 				this.nodes.push({
 					id: 'bonus_'+i,
 					width: 1,
 					height: 1,
-					font: brands[i],
-					x: (this.canvas.width / 2) - 9,
-					y: (this.canvas.height / 2) - 9,
+					fontCode: brands[ Math.floor(Math.random() * (brands.length-1)) ],
+					fontColor: '#000',
+					fontSize: '36px',
+
+					x: ((this.canvas.width - 170*2) / 4) + 170 + (Math.random() * 6) * 36,
+//					((Math.floor((this.canvas.width - 300 - 18 - 18) / 36) * Math.random()) * 36) + 150 + 18,
+					y: this.canvas.height - 40 
 				});
 			}
-*/
+
 			paddle = this.getNode('paddle');
 			player = this.getNode('player');
+			ball = this.getNode('ball');
 			paddle.speed = 8;
 
 			this.running = this.over = false;
-			this.turn = this.paddle;
+			this.turn = this.getNode('paddle');
 			this.timer = this.round = 0;
 			this.color = '#2c3e50';
 
@@ -100,9 +109,8 @@
 
 		app.listen = function(){
 			document.addEventListener('keydown', function (key) {
-				if (this.running === false) {
-					this.running = true;
-					window.requestAnimationFrame(this.loop);
+				if (app.running === false) {
+					app.running = true;
 				}
 				if (key.keyCode === 38 || key.keyCode === 87)
 					player.move = DIRECTION.UP;
@@ -111,7 +119,9 @@
 					player.move = DIRECTION.DOWN;
 			});
 
-			document.addEventListener('keyup', function (key) { player.move = DIRECTION.IDLE; });
+			document.addEventListener('keyup', function (key) {
+				player.move = DIRECTION.IDLE; 
+			});
 		};
 
 		app.updateFonts = function () {
@@ -119,12 +129,16 @@
 
 			for(var index in this.nodes){
 				var node = this.nodes[index];
-				if(node.fontCode !== null){
+				var nx = 0;
+				var ny = 0;
+				if(node.fontCode !== null || node.fontCode !== undefined){
 					this.context.fillStyle = node.fontColor;
-					this.context.font = '64px FontAwesome';
+					this.context.font = node.fontSize + ' FontAwesome';
 					this.context.textAlign = 'center';
 					this.context.textBaseline = 'middle';
-					this.context.fillText(node.fontCode, node.x+(node.width/2), node.y+(node.height));
+						nx = node.x+(node.width/2);
+						ny = node.y+(node.height);
+					this.context.fillText(node.fontCode, nx, ny);
 				}
 			}
 			this.lastUpdate = Date.now();
@@ -142,24 +156,25 @@
 		};
 
 		app._resetTurn = function(victor, loser) {
-//			this.ball = Ball.new.call(this, this.ball.speed);
+			this.ball = this.getNode('ball');	//Ball.new.call(this, this.ball.speed);
+
 			this.turn = loser;
 			this.timer = (new Date()).getTime();
 
 			victor.score++;
 		};
 
-		app.onUpdate = function(time) {
+		app._turnDelay = function() {
+			return ((new Date()).getTime() - this.timer >= 1000);
+		};
 
-			this.updateFonts();
-			this.netLine();
-
+		app.handleCollisions = function() {
 			// If the ball collides with the bound limits - correct the x and y coords.
 			if (this.getNode('ball').x <= 0) 
-				app._resetTurn.call(this, this.getNode('paddle'), this.getNode('player'));
+				this._resetTurn.call(this, this.getNode('paddle'), this.getNode('player'));
 
 			if (this.getNode('ball').x >= this.canvas.width - this.getNode('ball').width) 
-				app._resetTurn.call(this, this.getNode('player'), this.getNode('paddle'));
+				this._resetTurn.call(this, this.getNode('player'), this.getNode('paddle'));
 
 			if (this.getNode('ball').y <= 0) 
 				this.getNode('ball').moveY = DIRECTION.DOWN;
@@ -168,21 +183,140 @@
 				this.getNode('ball').moveY = DIRECTION.UP;
 
 			if (!this.over) {
+
 				// Move player if they player.move value was updated by a keyboard event
 				if (this.getNode('player').move === DIRECTION.UP) 
 					this.getNode('player').y -= this.getNode('player').speed;
+
 				else if (this.getNode('player').move === DIRECTION.DOWN) 
 					this.getNode('player').y += this.getNode('player').speed;
 
+				// serve ball & randomize direction
+				if (this._turnDelay.call(this) && this.turn) {
+					this.getNode('ball').moveX = this.turn === this.getNode('player') ? DIRECTION.LEFT : DIRECTION.RIGHT;
+					this.getNode('ball').moveY = [DIRECTION.UP, DIRECTION.DOWN][Math.round(Math.random())];
+					this.getNode('ball').y = Math.floor(Math.random() * this.canvas.height - 200) + 200;
+					this.turn = null;
+				}
 
 				// If the player collides with the bound limits, update the x and y coords.
 				if (this.getNode('player').y <= 0) 
 					this.getNode('player').y = 0;
+
 				else if (this.getNode('player').y >= (this.canvas.height - this.getNode('player').height)) 
 					this.getNode('player').y = (this.canvas.height - this.getNode('player').height);
+
+				// Move ball in intended direction based on moveY and moveX values
+				if (this.getNode('ball').moveY === DIRECTION.UP)
+
+					this.getNode('ball').y -= (this.getNode('ball').speed / 1.5);
+
+				else if (this.getNode('ball').moveY === DIRECTION.DOWN)
+					this.getNode('ball').y += (this.getNode('ball').speed / 1.5);
+
+				if (this.getNode('ball').moveX === DIRECTION.LEFT)
+					this.getNode('ball').x -= this.getNode('ball').speed;
+
+				else if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
+					this.getNode('ball').x += this.getNode('ball').speed;
+
+				// Handle paddle UP and DOWN movement
+				if (this.getNode('paddle').y > this.getNode('ball').y - (this.getNode('paddle').height / 2)) {
+					if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
+						this.getNode('paddle').y -= this.getNode('paddle').speed / 1.5;
+					else 
+						this.getNode('paddle').y -= this.getNode('paddle').speed / 4;
+				}
+				if (this.getNode('paddle').y < this.getNode('ball').y - (this.getNode('paddle').height / 2)) {
+					if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
+						this.getNode('paddle').y += this.getNode('paddle').speed / 1.5;
+					else 
+						this.getNode('paddle').y += this.getNode('paddle').speed / 4;
+				}
+
+				// Handle paddle wall collision
+				if (this.getNode('paddle').y >= this.canvas.height - this.getNode('paddle').height) 
+					this.getNode('paddle').y = this.canvas.height - this.getNode('paddle').height;
+				else if (this.getNode('paddle').y <= 0) 
+					this.getNode('paddle').y = 0;
+
+				// Handle player-ball collisions
+				if (this.getNode('ball').x - this.getNode('ball').width <= this.getNode('player').x && 
+					this.getNode('ball').x >= this.getNode('player').x - this.getNode('player').width) {
+
+					if (this.getNode('ball').y <= this.getNode('player').y + this.getNode('player').height && 
+						this.getNode('ball').y + this.getNode('ball').height >= this.getNode('player').y) {
+
+						this.getNode('ball').x = (this.getNode('player').x + this.getNode('ball').width);
+						this.getNode('ball').moveX = DIRECTION.RIGHT;
+					}
+				}
+
+				// Handle paddle-ball collision
+				if (this.getNode('ball').x - this.getNode('ball').width <= this.getNode('paddle').x && 
+					this.getNode('ball').x >= this.getNode('paddle').x - this.getNode('paddle').width) {
+
+					if (this.getNode('ball').y <= this.getNode('paddle').y + this.getNode('paddle').height && 
+						this.getNode('ball').y + this.getNode('ball').height >= this.getNode('paddle').y) {
+
+						this.getNode('ball').x = (this.getNode('paddle').x - this.getNode('ball').width);
+						this.getNode('ball').moveX = DIRECTION.LEFT;
+					}
+				}
+
 			}
 
+			// Handle the end of round transition
+			if (this.getNode('player').score === rounds[this.round]) {
+
+				if (!rounds[this.round + 1]) {
+					this.over = true;
+					setTimeout(function () { 
+//						app.endGameMenu('Winner!');
+					}, 1000);
+
+				} else {
+					// If there is another round, reset all the values and increment the round number.
+					this.color = '#000';
+					this.getNode('player').score = this.getNode('paddle').score = 0;
+					this.getNode('player').speed += 0.5;
+					this.getNode('paddle').speed += 1;
+					this.getNode('ball').speed += 1;
+					this.round += 1;
+				}
+			}
+
+			// Check to see if the paddle has won the round.
+			else if (this.getNode('paddle').score === rounds[this.round]) {
+				this.over = true;
+
+				setTimeout(function () { 
+//					app.endGameMenu('Game Over!');
+				}, 1000);
+
+			}
 		};
+
+		app.onUpdate = function(time) {
+			this.updateFonts();
+			this.netLine();
+			this.handleCollisions();
+		};
+
+		app.endGameMenu = function(text) {
+			this.context.font = '50px Courier New';
+			this.context.fillStyle = '#000';
+			this.context.fillRect(this.canvas.width / 2 - 350, this.canvas.height / 2 - 48, 700, 100);
+			this.context.fillStyle = '#88000';
+			this.context.fillText(text, this.canvas.width / 2, this.canvas.height / 2 + 15);
+
+			setTimeout(function () {
+//				this = Object.assign({}, app);
+				app.init();
+			}, 3000);
+
+		};
+
 	</script>
 </body>
 </html>
