@@ -97,20 +97,30 @@
 			paddle = this.getNode('paddle');
 			player = this.getNode('player');
 			ball = this.getNode('ball');
-			paddle.speed = 8;
+			this.getNode('paddle').speed = 8;
 
 			this.running = this.over = false;
 			this.turn = this.getNode('paddle');
 			this.timer = this.round = 0;
 			this.color = '#2c3e50';
 
+			app.menu();
 			app.listen();
+		};
+
+		app.menu = function () {
+			this.context.font = '50px Courier New';
+			this.context.fillStyle = this.color;
+
+			this.context.fillRect(this.canvas.width / 2 - 350, this.canvas.height / 2 - 48, 700, 100);
+			this.context.fillStyle = '#ffffff';
+			this.context.fillText('Press any key to begin', this.canvas.width / 2, this.canvas.height / 2 + 15);
 		};
 
 		app.listen = function(){
 			document.addEventListener('keydown', function (key) {
-				if (app.running === false) {
-					app.running = true;
+				if (this.running === false) {
+					this.running = true;
 				}
 				if (key.keyCode === 38 || key.keyCode === 87)
 					player.move = DIRECTION.UP;
@@ -124,28 +134,24 @@
 			});
 		};
 
-		app.updateFonts = function () {
+		app.drawItems = function () {
 		    var dt = Date.now() - this.lastUpdate;
 
 			for(var index in this.nodes){
 				var node = this.nodes[index];
-				var nx = 0;
-				var ny = 0;
-				if(node.fontCode !== null || node.fontCode !== undefined){
+				if(node.fontCode !== null && node.fontCode !== undefined){
 					this.context.fillStyle = node.fontColor;
 					this.context.font = node.fontSize + ' FontAwesome';
 					this.context.textAlign = 'center';
 					this.context.textBaseline = 'middle';
-						nx = node.x+(node.width/2);
-						ny = node.y+(node.height);
-					this.context.fillText(node.fontCode, nx, ny);
+					this.context.fillText(node.fontCode, node.x+(node.width/2), node.y+(node.height));
 				}
 			}
 			this.lastUpdate = Date.now();
 			this.timestamp += dt;
 		};
 
-		app.netLine = function() {
+		app.drawArena = function() {
 			this.context.beginPath();
 			this.context.setLineDash([7, 15]);
 			this.context.moveTo((this.canvas.width / 2), 0);
@@ -153,6 +159,19 @@
 			this.context.lineWidth = 10;
 			this.context.strokeStyle = '#000';
 			this.context.stroke();
+
+			// Draw the players score
+			this.context.font = '100px Courier New';
+			this.context.textAlign = 'center';
+			this.context.fillStyle = '#000';
+/*
+			if(this.getNode('player') !== undefined)
+				this.context.fillText(app.getNode('player').score.toString(), (this.canvas.width / 2) - 300, 200);
+			if(this.getNode('paddle') !== undefined)
+				this.context.fillText(this.getNode('paddle').score.toString(), (this.canvas.width / 2) + 300, 200);
+*/
+			this.context.font = '30px Courier New';
+			this.context.fillText('Round ' + (app.round + 1) + ' of ' + (rounds[app.round] ? rounds[app.round] : rounds[app.round - 1]), (this.canvas.width / 2)+8, 35);
 		};
 
 		app._resetTurn = function(victor, loser) {
@@ -193,7 +212,7 @@
 
 				// serve ball & randomize direction
 				if (this._turnDelay.call(this) && this.turn) {
-					this.getNode('ball').moveX = this.turn === this.getNode('player') ? DIRECTION.LEFT : DIRECTION.RIGHT;
+					this.getNode('ball').moveX = this.turn === this.getNode('player') ? DIRECTION.RIGHT : DIRECTION.LEFT;
 					this.getNode('ball').moveY = [DIRECTION.UP, DIRECTION.DOWN][Math.round(Math.random())];
 					this.getNode('ball').y = Math.floor(Math.random() * this.canvas.height - 200) + 200;
 					this.turn = null;
@@ -298,8 +317,8 @@
 		};
 
 		app.onUpdate = function(time) {
-			this.updateFonts();
-			this.netLine();
+			this.drawArena();
+			this.drawItems();
 			this.handleCollisions();
 		};
 
