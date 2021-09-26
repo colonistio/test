@@ -77,7 +77,7 @@
 				moveY: DIRECTION.IDLE,
 				speed: 10
 			});
-
+/*
 			var bonusNum = Math.random() * 4;
 			for (var i = bonusNum; i >= 0; i--) {
 				this.nodes.push({
@@ -89,11 +89,10 @@
 					fontSize: '36px',
 
 					x: ((this.canvas.width - 170*2) / 4) + 170 + (Math.random() * 6) * 36,
-//					((Math.floor((this.canvas.width - 300 - 18 - 18) / 36) * Math.random()) * 36) + 150 + 18,
 					y: this.canvas.height - 40 
 				});
 			}
-
+*/
 			paddle = this.getNode('paddle');
 			player = this.getNode('player');
 			ball = this.getNode('ball');
@@ -188,6 +187,19 @@
 		};
 
 		app.handleCollisions = function() {
+				var ballX = this.getNode('ball').x;
+				var ballY = this.getNode('ball').y;
+				var ballW = this.getNode('ball').width;
+				var ballH = this.getNode('ball').height;
+				var playerX = this.getNode('player').x;
+				var playerY = this.getNode('player').y;
+				var playerW = this.getNode('player').width;
+				var playerH = this.getNode('player').height;
+				var paddleX = this.getNode('paddle').x;
+				var paddleY = this.getNode('paddle').y;
+				var paddleW = this.getNode('paddle').width;
+				var paddleH = this.getNode('paddle').height;
+
 			// If the ball collides with the bound limits - correct the x and y coords.
 			if (this.getNode('ball').x <= 0) 
 				this._resetTurn.call(this, this.getNode('paddle'), this.getNode('player'));
@@ -219,11 +231,12 @@
 				}
 
 				// If the player collides with the bound limits, update the x and y coords.
-				if (this.getNode('player').y <= 0) 
+				if (playerY <= 0) 
 					this.getNode('player').y = 0;
 
-				else if (this.getNode('player').y >= (this.canvas.height - this.getNode('player').height)) 
-					this.getNode('player').y = (this.canvas.height - this.getNode('player').height);
+				else if (playerY >= (this.canvas.height - playerH)) 
+					this.getNode('player').y = (this.canvas.height - playerH);
+
 
 				// Move ball in intended direction based on moveY and moveX values
 				if (this.getNode('ball').moveY === DIRECTION.UP)
@@ -233,6 +246,7 @@
 				else if (this.getNode('ball').moveY === DIRECTION.DOWN)
 					this.getNode('ball').y += (this.getNode('ball').speed / 1.5);
 
+
 				if (this.getNode('ball').moveX === DIRECTION.LEFT)
 					this.getNode('ball').x -= this.getNode('ball').speed;
 
@@ -240,13 +254,13 @@
 					this.getNode('ball').x += this.getNode('ball').speed;
 
 				// Handle paddle UP and DOWN movement
-				if (this.getNode('paddle').y > this.getNode('ball').y - (this.getNode('paddle').height / 2)) {
+				if (paddleY > ballY - (paddleH / 2)) {
 					if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
 						this.getNode('paddle').y -= this.getNode('paddle').speed / 1.5;
 					else 
 						this.getNode('paddle').y -= this.getNode('paddle').speed / 4;
 				}
-				if (this.getNode('paddle').y < this.getNode('ball').y - (this.getNode('paddle').height / 2)) {
+				if (paddleY < ballY - (paddleH / 2)) {
 					if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
 						this.getNode('paddle').y += this.getNode('paddle').speed / 1.5;
 					else 
@@ -254,32 +268,28 @@
 				}
 
 				// Handle paddle wall collision
-				if (this.getNode('paddle').y >= this.canvas.height - this.getNode('paddle').height) 
-					this.getNode('paddle').y = this.canvas.height - this.getNode('paddle').height;
-				else if (this.getNode('paddle').y <= 0) 
+				if (paddleY >= this.canvas.height - paddleH) 
+					this.getNode('paddle').y = this.canvas.height - paddleH;
+				else if (paddleY <= 0) 
 					this.getNode('paddle').y = 0;
 
 				// Handle player-ball collisions
-				if (this.getNode('ball').x - this.getNode('ball').width <= this.getNode('player').x && 
-					this.getNode('ball').x >= this.getNode('player').x - this.getNode('player').width) {
-
-					if (this.getNode('ball').y <= this.getNode('player').y + this.getNode('player').height && 
-						this.getNode('ball').y + this.getNode('ball').height >= this.getNode('player').y) {
-
-						this.getNode('ball').x = (this.getNode('player').x + this.getNode('ball').width);
-						this.getNode('ball').moveX = DIRECTION.RIGHT;
+				if (ballX + ballW >= playerX && ballX >= playerX + playerW)
+				{
+					if (ballY <= playerY + playerH && ballY + ballH >= playerY)
+					{
+						this.getNode('ball').x = playerX + ballW;
+						this.getNode('ball').moveX = DIRECTION.LEFT;
 					}
 				}
 
 				// Handle paddle-ball collision
-				if (this.getNode('ball').x - this.getNode('ball').width <= this.getNode('paddle').x && 
-					this.getNode('ball').x >= this.getNode('paddle').x - this.getNode('paddle').width) {
-
-					if (this.getNode('ball').y <= this.getNode('paddle').y + this.getNode('paddle').height && 
-						this.getNode('ball').y + this.getNode('ball').height >= this.getNode('paddle').y) {
-
-						this.getNode('ball').x = (this.getNode('paddle').x - this.getNode('ball').width);
-						this.getNode('ball').moveX = DIRECTION.LEFT;
+				if (ballX - ballW <= paddleX && ballX >= paddleX - paddleW)
+				{
+					if (ballY <= paddleY + paddleH && ballY + ballH >= paddleY)
+					{
+						this.getNode('ball').x = paddleX - ballW;
+						this.getNode('ball').moveX = DIRECTION.RIGHT;
 					}
 				}
 
