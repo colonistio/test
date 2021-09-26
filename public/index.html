@@ -163,23 +163,26 @@
 			this.context.font = '100px Courier New';
 			this.context.textAlign = 'center';
 			this.context.fillStyle = '#000';
-/*
-			if(this.getNode('player') !== undefined)
-				this.context.fillText(app.getNode('player').score.toString(), (this.canvas.width / 2) - 300, 200);
-			if(this.getNode('paddle') !== undefined)
-				this.context.fillText(this.getNode('paddle').score.toString(), (this.canvas.width / 2) + 300, 200);
-*/
+
+			splayer = this.getNode('player').score ? this.getNode('player').score.toString() : '0';
+			this.context.fillText(splayer, (this.canvas.width / 2) - 300, 200);
+
+			spaddle = this.getNode('paddle').score ? this.getNode('paddle').score.toString() : '0';
+			this.context.fillText(spaddle, (this.canvas.width / 2) + 300, 200);
+
 			this.context.font = '30px Courier New';
-			this.context.fillText('Round ' + (app.round + 1) + ' of ' + (rounds[app.round] ? rounds[app.round] : rounds[app.round - 1]), (this.canvas.width / 2)+8, 35);
+			this.context.fillText('Round ' + (app.round + 1), (this.canvas.width / 2)+8, 35);
 		};
 
 		app._resetTurn = function(victor, loser) {
-			this.ball = this.getNode('ball');	//Ball.new.call(this, this.ball.speed);
+			if(this.turn !== loser){
+				this.ball = this.getNode('ball');		//Ball.new.call(this, this.ball.speed);
 
-			this.turn = loser;
-			this.timer = (new Date()).getTime();
+				this.turn = loser;
+				this.timer = (new Date()).getTime();
 
-			victor.score++;
+				victor.score++;
+			}
 		};
 
 		app._turnDelay = function() {
@@ -202,10 +205,10 @@
 
 			// If the ball collides with the bound limits - correct the x and y coords.
 			if (this.getNode('ball').x <= 0) 
-				this._resetTurn.call(this, this.getNode('paddle'), this.getNode('player'));
+				this._resetTurn(this.getNode('paddle'), this.getNode('player'));
 
 			if (this.getNode('ball').x >= this.canvas.width - this.getNode('ball').width) 
-				this._resetTurn.call(this, this.getNode('player'), this.getNode('paddle'));
+				this._resetTurn(this.getNode('player'), this.getNode('paddle'));
 
 			if (this.getNode('ball').y <= 0) 
 				this.getNode('ball').moveY = DIRECTION.DOWN;
@@ -223,7 +226,7 @@
 					this.getNode('player').y += this.getNode('player').speed;
 
 				// serve ball & randomize direction
-				if (this._turnDelay.call(this) && this.turn) {
+				if (this._turnDelay() && this.turn) {
 					this.getNode('ball').moveX = this.turn === this.getNode('player') ? DIRECTION.RIGHT : DIRECTION.LEFT;
 					this.getNode('ball').moveY = [DIRECTION.UP, DIRECTION.DOWN][Math.round(Math.random())];
 					this.getNode('ball').y = Math.floor(Math.random() * this.canvas.height - 200) + 200;
@@ -231,16 +234,20 @@
 				}
 
 				// If the player collides with the bound limits, update the x and y coords.
-				if (playerY <= 0) 
+				if (playerY + 1 <= 0)
 					this.getNode('player').y = 0;
+				else if (playerY - 1 >= this.canvas.height - playerH)
+					this.getNode('player').y = this.canvas.height - playerH;
 
-				else if (playerY >= (this.canvas.height - playerH)) 
-					this.getNode('player').y = (this.canvas.height - playerH);
+				// Handle paddle wall collision e.g. restrict to canvas upper/lower borders
+				if (paddleY >= this.canvas.height - paddleH) 
+					this.getNode('paddle').y = this.canvas.height - paddleH;
+				else if (paddleY <= 0) 
+					this.getNode('paddle').y = 0;
 
 
 				// Move ball in intended direction based on moveY and moveX values
 				if (this.getNode('ball').moveY === DIRECTION.UP)
-
 					this.getNode('ball').y -= (this.getNode('ball').speed / 1.5);
 
 				else if (this.getNode('ball').moveY === DIRECTION.DOWN)
@@ -266,31 +273,24 @@
 					else 
 						this.getNode('paddle').y += this.getNode('paddle').speed / 4;
 				}
-
-				// Handle paddle wall collision e.g. restrict to canvas upper/lower borders
-				if (paddleY >= this.canvas.height - paddleH) 
-					this.getNode('paddle').y = this.canvas.height - paddleH;
-				else if (paddleY <= 0) 
-					this.getNode('paddle').y = 0;
-
 				// Handle player-ball collisions
-				if (ballX + ballW >= playerX)
-				{
-					if (ballY - (ballH/2) <= playerY + playerH && ballY + (ballH/2) >= playerY)
-					{	// if ball is at elast halfly colliding with the paddle
-						this.getNode('ball').x = playerX - ballW;
-						this.getNode('ball').moveX = DIRECTION.LEFT;
-					}
+				if (ballX + ballW >= playerX &&
+					ballX <= playerX + playerW &&
+					ballY - (ballH/2) <= playerY + playerH && 
+					ballY + (ballH/2) >= playerY)
+				{	// if ball is at elast halfly colliding with the paddle
+					this.getNode('ball').x = playerX - ballW;
+					this.getNode('ball').moveX = DIRECTION.LEFT;
 				}
 
 				// Handle paddle-ball collision
-				if (ballX <= paddleX + paddleW)
+				if (ballX <= paddleX + paddleW &&
+					ballX + ballW >= paddleX &&
+					ballY - (ballH/2) <= playerY + playerH && 
+					ballY + (ballH/2) >= playerY)
 				{
-					if (ballY - (ballH/2) <= paddleY + paddleH && ballY + (ballH/2) >= paddleY)
-					{
-						this.getNode('ball').x = paddleX + paddleW;
-						this.getNode('ball').moveX = DIRECTION.RIGHT;
-					}
+					this.getNode('ball').x = paddleX + paddleW;
+					this.getNode('ball').moveX = DIRECTION.RIGHT;
 				}
 
 			}
