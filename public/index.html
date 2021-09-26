@@ -267,28 +267,28 @@
 						this.getNode('paddle').y += this.getNode('paddle').speed / 4;
 				}
 
-				// Handle paddle wall collision
+				// Handle paddle wall collision e.g. restrict to canvas upper/lower borders
 				if (paddleY >= this.canvas.height - paddleH) 
 					this.getNode('paddle').y = this.canvas.height - paddleH;
 				else if (paddleY <= 0) 
 					this.getNode('paddle').y = 0;
 
 				// Handle player-ball collisions
-				if (ballX + ballW >= playerX && ballX >= playerX + playerW)
+				if (ballX + ballW >= playerX)
 				{
-					if (ballY <= playerY + playerH && ballY + ballH >= playerY)
-					{
-						this.getNode('ball').x = playerX + ballW;
+					if (ballY - (ballH/2) <= playerY + playerH && ballY + (ballH/2) >= playerY)
+					{	// if ball is at elast halfly colliding with the paddle
+						this.getNode('ball').x = playerX - ballW;
 						this.getNode('ball').moveX = DIRECTION.LEFT;
 					}
 				}
 
 				// Handle paddle-ball collision
-				if (ballX - ballW <= paddleX && ballX >= paddleX - paddleW)
+				if (ballX <= paddleX + paddleW)
 				{
-					if (ballY <= paddleY + paddleH && ballY + ballH >= paddleY)
+					if (ballY - (ballH/2) <= paddleY + paddleH && ballY + (ballH/2) >= paddleY)
 					{
-						this.getNode('ball').x = paddleX - ballW;
+						this.getNode('ball').x = paddleX + paddleW;
 						this.getNode('ball').moveX = DIRECTION.RIGHT;
 					}
 				}
