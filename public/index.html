@@ -4,42 +4,147 @@
 	<title>Ping Pong Game</title>
 </head>
 <body>
-	<canvas id="canvas" width="800" height="400"></canvas>
+	<canvas id="canvas" width="800" height="400" style="background-color: black; width: 100%; height: 100%;"></canvas>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
-		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
+		//Variables
+		let paddleSpeed = 3;
+		let gamePaused = false;
+		let ballDirection = 0;
+
+		let p1Down = false;
+		let p1Up = false;
+
+		let p2Down = false;
+		let p2Up = false;
+		
+		//Functions 
+		//Set random start angle for ball
+		function seedBall(){
+			startSeed = Math.random()*100;
+			if(startSeed < 25){			ballDirection = 0.78} 
+			else if(startSeed < 50){	ballDirection = 2.35} 
+			else if(startSeed < 75){	ballDirection = 3.92} 
+			else{						ballDirection = 5.49}
+		}		
+
+		//Init
 		app.onInit = function(){
 			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
-				y  : 0,
-				width  : 100,
+				id : 'player1',
+				x  : 25,
+				y  : 150,
+				width  : 20,
 				height : 100,
-				color  : 'red',
-				direction : 0
+				color  : 'white'
+			});
+			this.nodes.push({
+				id : 'player2',
+				x  : 760,
+				y  : 150,
+				width  : 20,
+				height : 100,
+				color  : 'white'
 			});
 
 			this.nodes.push({
-				id : 'black-box',
-				x  : 50,
-				y  : 0,
-				width  : 150,
-				height : 150,
-				color  : 'black'
+				id : 'ball',
+				x  : 400,
+				y  : 200,
+				width  : 10,
+				height : 20,
+				color  : 'white',
+				speed : 3
 			});
-		};
 
-		app.onUpdate = function(time){
-			this.getNode('black-box').y++;
+			this.nodes.push({
+				id : 'line',
+				x  : 390,
+				y  : 0,
+				width  : 10,
+				height : 400,
+				color  : 'white',
+			});
+				
+			//Seed needs to be called here
+			seedBall();
 
-			if(Math.cos(this.timestamp / 100) > 0){
-				this.getNode('red-box').direction = -1;
-			}else{
-				this.getNode('red-box').direction = 1;
+			//Keydown Handler
+			document.addEventListener('keydown', keyDownHandler);
+			function keyDownHandler(key) {
+				if(key.keyCode == 87){ 	p1Up = true;}
+				if(key.keyCode == 83){ 	p1Down = true;}
+				if(key.keyCode == 38){	p2Up = true;}
+				if(key.keyCode == 40){	p2Down = true;}
+				//Pause & Unpause
+				if(key.keyCode == 32){
+					if(gamePaused){gamePaused = false;}	
+					else{gamePaused = true;}					
+				}
 			}
 
-			this.getNode('red-box').x+=this.getNode('red-box').direction;
+			//Keyup Handler
+			document.addEventListener('keyup', keyUpHandler);
+			function keyUpHandler(key) {
+				if(key.keyCode == 87){	p1Up = false;}
+				if(key.keyCode == 83){	p1Down = false;}
+				if(key.keyCode == 38){	p2Up = false;}
+				if(key.keyCode == 40){	p2Down = false;}
+			}
+		};
+
+		//On Update
+		app.onUpdate = function(){
+			
+			if(!gamePaused){
+				//Move paddles based on current speed while staying in bounds
+					//Player 1
+				if(p1Down && this.getNode('player1').y < 300){	this.getNode('player1').y += paddleSpeed;}
+				if(p1Up && this.getNode('player1').y > 0){		this.getNode('player1').y -= paddleSpeed;}
+					//Player 2
+				if(p2Down && this.getNode('player2').y < 300){	this.getNode('player2').y += paddleSpeed;}
+				if(p2Up && this.getNode('player2').y > 0){		this.getNode('player2').y -= paddleSpeed;}
+
+				//Add speed value to direction that ball is travelling
+				this.getNode('ball').x += Math.cos(ballDirection)*this.getNode('ball').speed;
+				this.getNode('ball').y += Math.sin(ballDirection)*this.getNode('ball').speed;
+			}
+			
+			//Reset ball and update score when ball reaches sides
+			if(this.getNode('ball').x < -20 || this.getNode('ball').x > 800)
+			{
+				if(this.getNode('ball').x > 800){ this.p1Score ++;}
+				if(this.getNode('ball').x < -20){ this.p2Score ++;}
+				console.log("score: Player 1 - " + this.p1Score + "     Player 2 - " + this.p2Score); 	
+				this.getNode('ball').x = 400;
+				this.getNode('ball').y = 200;
+				this.getNode('ball').speed = 3;
+				seedBall();
+			}
+			//Invert direction when ball hits top and bottom
+			if(this.getNode('ball').y < 0 || this.getNode('ball').y > 380)
+			{
+				ballDirection *= -1;
+			}	
+
+			//Bounce off Paddles
+				//Player 1
+			if(	this.getNode('ball').x > 35 &&
+				this.getNode('ball').x < 55 && 	
+				(this.getNode('ball').y - (this.getNode('player1').y+50)) < 50 &&
+				(this.getNode('ball').y - (this.getNode('player1').y+50)) > -50){
+					ballDirection -= 1.57;
+					this.getNode('ball').speed += 0.1; //Speed up ball every hit
+			}
+				//Player 2
+			if(	this.getNode('ball').x > 750 && 	
+				this.getNode('ball').x < 770 && 	
+				(this.getNode('ball').y - (this.getNode('player2').y+50)) < 50 &&
+				(this.getNode('ball').y - (this.getNode('player2').y+50)) > -50){
+					ballDirection -= 1.57;
+					this.getNode('ball').speed += 0.1; //Speed up ball every hit
+			}
 		};
 	</script>
 </body>
