@@ -27,8 +27,9 @@
 		var colors = ['#1abc9c', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6'];
 		var brands = ["\uf092", "\uf0d4", "\uf08c", "\uf3bb", "\uf2d8", "\uf1d2", "\uf082", "\uf167", "\uf081"];
 		var ballCode = "\uf1a1";
-		var player;
-		var paddle;
+		var pause = true;
+		var rplayer;
+		var lplayer;
 		var ball;
 
 		app.onInit = function(){
@@ -38,7 +39,7 @@
 			this.round = 1;
 
 			this.nodes.push({
-				id: 'paddle',
+				id: 'lplayer',
 				width: 18,
 				height: 70,
 				x: 150,
@@ -51,7 +52,7 @@
 			});
 
 			this.nodes.push({
-				id: 'player',
+				id: 'rplayer',
 				width: 18,
 				height: 70,
 				x: this.canvas.width - 150,
@@ -93,13 +94,13 @@
 				});
 			}
 */
-			paddle = this.getNode('paddle');
-			player = this.getNode('player');
+			lplayer = this.getNode('lplayer');
+			rplayer = this.getNode('rplayer');
 			ball = this.getNode('ball');
-			this.getNode('paddle').speed = 8;
+			this.getNode('lplayer').speed = 8;
 
 			this.running = this.over = false;
-			this.turn = this.getNode('paddle');
+			this.turn = this.getNode('lplayer');
 			this.timer = this.round = 0;
 			this.color = '#2c3e50';
 
@@ -116,20 +117,45 @@
 			this.context.fillText('Press any key to begin', this.canvas.width / 2, this.canvas.height / 2 + 15);
 		};
 
+		app.reset = function() {
+			this.pause = true;
+		};
+
+		app.pauseGame = function() {
+			this.pause = true;
+		};
+
+		app.unpauseGame = function() {
+			this.pause = false;
+		};
+
 		app.listen = function(){
 			document.addEventListener('keydown', function (key) {
 				if (this.running === false) {
 					this.running = true;
 				}
-				if (key.keyCode === 38 || key.keyCode === 87)
-					player.move = DIRECTION.UP;
+				if (key.keyCode === 32)
+					this.pause != this.pause;
 
-				if (key.keyCode === 40 || key.keyCode === 83)
-					player.move = DIRECTION.DOWN;
+				if(!this.pause){
+
+					if (key.keyCode === 38)
+						rplayer.move = DIRECTION.UP;
+
+					if (key.keyCode === 40)
+						rplayer.move = DIRECTION.DOWN;
+
+					if (key.keyCode === 87)
+						lplayer.move = DIRECTION.UP;
+
+					if (key.keyCode === 83)
+						lplayer.move = DIRECTION.DOWN;
+				}
 			});
 
 			document.addEventListener('keyup', function (key) {
-				player.move = DIRECTION.IDLE; 
+				lplayer.move = DIRECTION.IDLE; 
+				rplayer.move = DIRECTION.IDLE; 
 			});
 		};
 
@@ -164,11 +190,11 @@
 			this.context.textAlign = 'center';
 			this.context.fillStyle = '#000';
 
-			splayer = this.getNode('player').score ? this.getNode('player').score.toString() : '0';
-			this.context.fillText(splayer, (this.canvas.width / 2) - 300, 200);
+			srplayer = this.getNode('rplayer').score ? this.getNode('rplayer').score.toString() : '0';
+			this.context.fillText(srplayer, (this.canvas.width / 2) - 300, 200);
 
-			spaddle = this.getNode('paddle').score ? this.getNode('paddle').score.toString() : '0';
-			this.context.fillText(spaddle, (this.canvas.width / 2) + 300, 200);
+			slplayer = this.getNode('lplayer').score ? this.getNode('lplayer').score.toString() : '0';
+			this.context.fillText(slplayer, (this.canvas.width / 2) + 300, 200);
 
 			this.context.font = '30px Courier New';
 			this.context.fillText('Round ' + (app.round + 1), (this.canvas.width / 2)+8, 35);
@@ -190,25 +216,25 @@
 		};
 
 		app.handleCollisions = function() {
-				var ballX = this.getNode('ball').x;
-				var ballY = this.getNode('ball').y;
-				var ballW = this.getNode('ball').width;
-				var ballH = this.getNode('ball').height;
-				var playerX = this.getNode('player').x;
-				var playerY = this.getNode('player').y;
-				var playerW = this.getNode('player').width;
-				var playerH = this.getNode('player').height;
-				var paddleX = this.getNode('paddle').x;
-				var paddleY = this.getNode('paddle').y;
-				var paddleW = this.getNode('paddle').width;
-				var paddleH = this.getNode('paddle').height;
+			var ballX = this.getNode('ball').x;
+			var ballY = this.getNode('ball').y;
+			var ballW = this.getNode('ball').width;
+			var ballH = this.getNode('ball').height;
+			var rplayerX = this.getNode('rplayer').x;
+			var rplayerY = this.getNode('rplayer').y;
+			var rplayerW = this.getNode('rplayer').width;
+			var rplayerH = this.getNode('rplayer').height;
+			var lplayerX = this.getNode('lplayer').x;
+			var lplayerY = this.getNode('lplayer').y;
+			var lplayerW = this.getNode('lplayer').width;
+			var lplayerH = this.getNode('lplayer').height;
 
 			// If the ball collides with the bound limits - correct the x and y coords.
 			if (this.getNode('ball').x <= 0) 
-				this._resetTurn(this.getNode('paddle'), this.getNode('player'));
+				this._resetTurn(this.getNode('lplayer'), this.getNode('rplayer'));
 
 			if (this.getNode('ball').x >= this.canvas.width - this.getNode('ball').width) 
-				this._resetTurn(this.getNode('player'), this.getNode('paddle'));
+				this._resetTurn(this.getNode('rplayer'), this.getNode('lplayer'));
 
 			if (this.getNode('ball').y <= 0) 
 				this.getNode('ball').moveY = DIRECTION.DOWN;
@@ -219,32 +245,36 @@
 			if (!this.over) {
 
 				// Move player if they player.move value was updated by a keyboard event
-				if (this.getNode('player').move === DIRECTION.UP) 
-					this.getNode('player').y -= this.getNode('player').speed;
+				if (this.getNode('rplayer').move === DIRECTION.UP) 
+					this.getNode('rplayer').y -= this.getNode('rplayer').speed;
 
-				else if (this.getNode('player').move === DIRECTION.DOWN) 
-					this.getNode('player').y += this.getNode('player').speed;
+				else if (this.getNode('rplayer').move === DIRECTION.DOWN) 
+					this.getNode('rplayer').y += this.getNode('rplayer').speed;
+
+				if (this.getNode('lplayer').move === DIRECTION.UP) 
+					this.getNode('lplayer').y -= this.getNode('lplayer').speed;
+
+				else if (this.getNode('lplayer').move === DIRECTION.DOWN) 
+					this.getNode('lplayer').y += this.getNode('lplayer').speed;
 
 				// serve ball & randomize direction
 				if (this._turnDelay() && this.turn) {
-					this.getNode('ball').moveX = this.turn === this.getNode('player') ? DIRECTION.RIGHT : DIRECTION.LEFT;
+					this.getNode('ball').moveX = this.turn === this.getNode('rplayer') ? DIRECTION.RIGHT : DIRECTION.LEFT;
 					this.getNode('ball').moveY = [DIRECTION.UP, DIRECTION.DOWN][Math.round(Math.random())];
 					this.getNode('ball').y = Math.floor(Math.random() * this.canvas.height - 200) + 200;
 					this.turn = null;
 				}
 
 				// If the player collides with the bound limits, update the x and y coords.
-				if (playerY + 1 <= 0)
-					this.getNode('player').y = 0;
-				else if (playerY - 1 >= this.canvas.height - playerH)
-					this.getNode('player').y = this.canvas.height - playerH;
+				if (rplayerY + 1 <= 0)
+					this.getNode('rplayer').y = 0;
+				else if (rplayerY - 1 >= this.canvas.height - rplayerH)
+					this.getNode('rplayer').y = this.canvas.height - rplayerH;
 
-				// Handle paddle wall collision e.g. restrict to canvas upper/lower borders
-				if (paddleY >= this.canvas.height - paddleH) 
-					this.getNode('paddle').y = this.canvas.height - paddleH;
-				else if (paddleY <= 0) 
-					this.getNode('paddle').y = 0;
-
+				if (lplayerY + 1 <= 0)
+					this.getNode('lplayer').y = 0;
+				else if (lplayerY - 1 >= this.canvas.height - lplayerH)
+					this.getNode('lplayer').y = this.canvas.height - lplayerH;
 
 				// Move ball in intended direction based on moveY and moveX values
 				if (this.getNode('ball').moveY === DIRECTION.UP)
@@ -260,43 +290,30 @@
 				else if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
 					this.getNode('ball').x += this.getNode('ball').speed;
 
-				// Handle paddle UP and DOWN movement
-				if (paddleY > ballY - (paddleH / 2)) {
-					if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
-						this.getNode('paddle').y -= this.getNode('paddle').speed / 1.5;
-					else 
-						this.getNode('paddle').y -= this.getNode('paddle').speed / 4;
-				}
-				if (paddleY < ballY - (paddleH / 2)) {
-					if (this.getNode('ball').moveX === DIRECTION.RIGHT) 
-						this.getNode('paddle').y += this.getNode('paddle').speed / 1.5;
-					else 
-						this.getNode('paddle').y += this.getNode('paddle').speed / 4;
-				}
 				// Handle player-ball collisions
-				if (ballX + ballW >= playerX &&
-					ballX <= playerX + playerW &&
-					ballY - (ballH/2) <= playerY + playerH && 
-					ballY + (ballH/2) >= playerY)
-				{	// if ball is at elast halfly colliding with the paddle
-					this.getNode('ball').x = playerX - ballW;
+				if (ballX + ballW >= rplayerX &&
+					ballX <= rplayerX + rplayerW &&
+					ballY - (ballH/2) <= rplayerY + rplayerH && 
+					ballY + (ballH/2) >= rplayerY)
+				{	// if ball is at least halfly colliding with the lplayer
+					this.getNode('ball').x = rplayerX - ballW;
 					this.getNode('ball').moveX = DIRECTION.LEFT;
 				}
 
-				// Handle paddle-ball collision
-				if (ballX <= paddleX + paddleW &&
-					ballX + ballW >= paddleX &&
-					ballY - (ballH/2) <= playerY + playerH && 
-					ballY + (ballH/2) >= playerY)
+				// Handle lplayer-ball collision
+				if (ballX <= lplayerX + lplayerW &&
+					ballX + ballW >= lplayerX &&
+					ballY - (ballH/2) <= lplayerY + lplayerH && 
+					ballY + (ballH/2) >= lplayerY)
 				{
-					this.getNode('ball').x = paddleX + paddleW;
+					this.getNode('ball').x = lplayerX + lplayerW;
 					this.getNode('ball').moveX = DIRECTION.RIGHT;
 				}
 
 			}
 
 			// Handle the end of round transition
-			if (this.getNode('player').score === rounds[this.round]) {
+			if (this.getNode('rplayer').score === rounds[this.round]) {
 
 				if (!rounds[this.round + 1]) {
 					this.over = true;
@@ -307,16 +324,16 @@
 				} else {
 					// If there is another round, reset all the values and increment the round number.
 					this.color = '#000';
-					this.getNode('player').score = this.getNode('paddle').score = 0;
-					this.getNode('player').speed += 0.5;
-					this.getNode('paddle').speed += 1;
+					this.getNode('rplayer').score = this.getNode('lplayer').score = 0;
+					this.getNode('rplayer').speed += 0.5;
+					this.getNode('lplayer').speed += 1;
 					this.getNode('ball').speed += 1;
 					this.round += 1;
 				}
 			}
 
-			// Check to see if the paddle has won the round.
-			else if (this.getNode('paddle').score === rounds[this.round]) {
+			// Check to see if the lplayer has won the round.
+			else if (this.getNode('lplayer').score === rounds[this.round]) {
 				this.over = true;
 
 				setTimeout(function () { 
@@ -329,7 +346,9 @@
 		app.onUpdate = function(time) {
 			this.drawArena();
 			this.drawItems();
-			this.handleCollisions();
+			if(!this.pause){
+				this.handleCollisions();
+			}
 		};
 
 		app.endGameMenu = function(text) {
