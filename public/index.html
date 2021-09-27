@@ -100,7 +100,7 @@
 			this.getNode('lplayer').speed = 8;
 
 			this.running = this.over = false;
-			this.turn = this.getNode('lplayer');
+			this.turn = this.getNode('lplayer').id;
 			this.timer = this.round = 0;
 			this.color = '#2c3e50';
 
@@ -134,8 +134,9 @@
 				if (this.running === false) {
 					this.running = true;
 				}
-				if (key.keyCode === 32)
+				if (key.keyCode === 32){
 					this.pause != this.pause;
+				}
 
 				if(!this.pause){
 
@@ -190,10 +191,10 @@
 			this.context.textAlign = 'center';
 			this.context.fillStyle = '#000';
 
-			srplayer = this.getNode('rplayer').score ? this.getNode('rplayer').score.toString() : '0';
+			var srplayer = this.getNode('rplayer').score ? this.getNode('rplayer').score.toString() : '0';
 			this.context.fillText(srplayer, (this.canvas.width / 2) - 300, 200);
 
-			slplayer = this.getNode('lplayer').score ? this.getNode('lplayer').score.toString() : '0';
+			var slplayer = this.getNode('lplayer').score ? this.getNode('lplayer').score.toString() : '0';
 			this.context.fillText(slplayer, (this.canvas.width / 2) + 300, 200);
 
 			this.context.font = '30px Courier New';
@@ -201,13 +202,13 @@
 		};
 
 		app._resetTurn = function(victor, loser) {
-			if(this.turn !== loser){
-				this.ball = this.getNode('ball');		//Ball.new.call(this, this.ball.speed);
+			if(this.turn !== loser.id){
+				this.ball = this.getNode('ball');
 
-				this.turn = loser;
+				this.turn = loser.id;
 				this.timer = (new Date()).getTime();
 
-				victor.score++;
+				this.getNode(victor.id).score++;
 			}
 		};
 
@@ -242,7 +243,7 @@
 			if (this.getNode('ball').y >= this.canvas.height - this.getNode('ball').height) 
 				this.getNode('ball').moveY = DIRECTION.UP;
 
-			if (!this.over) {
+			if (!this.over && !this.pause) {
 
 				// Move player if they player.move value was updated by a keyboard event
 				if (this.getNode('rplayer').move === DIRECTION.UP) 
@@ -259,7 +260,7 @@
 
 				// serve ball & randomize direction
 				if (this._turnDelay() && this.turn) {
-					this.getNode('ball').moveX = this.turn === this.getNode('rplayer') ? DIRECTION.RIGHT : DIRECTION.LEFT;
+					this.getNode('ball').moveX = (this.turn === this.getNode('rplayer').id) ? DIRECTION.RIGHT : DIRECTION.LEFT;
 					this.getNode('ball').moveY = [DIRECTION.UP, DIRECTION.DOWN][Math.round(Math.random())];
 					this.getNode('ball').y = Math.floor(Math.random() * this.canvas.height - 200) + 200;
 					this.turn = null;
@@ -291,8 +292,8 @@
 					this.getNode('ball').x += this.getNode('ball').speed;
 
 				// Handle player-ball collisions
-				if (ballX + ballW >= rplayerX &&
-					ballX <= rplayerX + rplayerW &&
+				if (ballX + ballW -1 >= rplayerX &&
+					ballX -1 <= rplayerX + rplayerW &&
 					ballY - (ballH/2) <= rplayerY + rplayerH && 
 					ballY + (ballH/2) >= rplayerY)
 				{	// if ball is at least halfly colliding with the lplayer
@@ -301,8 +302,8 @@
 				}
 
 				// Handle lplayer-ball collision
-				if (ballX <= lplayerX + lplayerW &&
-					ballX + ballW >= lplayerX &&
+				if (ballX -1 <= lplayerX + lplayerW &&
+					ballX + ballW -1 >= lplayerX &&
 					ballY - (ballH/2) <= lplayerY + lplayerH && 
 					ballY + (ballH/2) >= lplayerY)
 				{
@@ -315,14 +316,23 @@
 			// Handle the end of round transition
 			if (this.getNode('rplayer').score === rounds[this.round]) {
 
-				if (!rounds[this.round + 1]) {
-					this.over = true;
+				if (!rounds[this.round + 1] && this.round) {
+					if(this.round >= rounds.length-1){
+						console.log('game finished.');
+						this.over = true;
+						this.round = 0;
+					}
 					setTimeout(function () { 
 //						app.endGameMenu('Winner!');
 					}, 1000);
 
 				} else {
 					// If there is another round, reset all the values and increment the round number.
+					if(!this.getNode('lplayer').score || !this.getNode('rplayer').score) {
+						console.log('game started.');
+					}else{
+						console.log('round '+this.round+' finished with left player scoring '+this.getNode('lplayer').score+' and right player scoring '+this.getNode('rplayer').score);
+					}
 					this.color = '#000';
 					this.getNode('rplayer').score = this.getNode('lplayer').score = 0;
 					this.getNode('rplayer').speed += 0.5;
@@ -334,11 +344,31 @@
 
 			// Check to see if the lplayer has won the round.
 			else if (this.getNode('lplayer').score === rounds[this.round]) {
-				this.over = true;
 
-				setTimeout(function () { 
-//					app.endGameMenu('Game Over!');
-				}, 1000);
+				if (!rounds[this.round + 1] && this.round) {
+					if(this.round >= rounds.length-1){
+						console.log('game finished.');
+						this.over = true;
+						this.round = 0;
+					}
+					setTimeout(function () { 
+//						app.endGameMenu('Winner!');
+					}, 1000);
+
+				} else {
+					// If there is another round, reset all the values and increment the round number.
+					if(!this.getNode('lplayer').score || !this.getNode('rplayer').score) {
+						console.log('game started.');
+					}else{
+						console.log('round '+this.round+' finished with left player scoring '+this.getNode('lplayer').score+' and right player scoring '+this.getNode('rplayer').score);
+					}
+					this.color = '#000';
+					this.getNode('lplayer').score = this.getNode('rplayer').score = 0;
+					this.getNode('lplayer').speed += 0.5;
+					this.getNode('rplayer').speed += 1;
+					this.getNode('ball').speed += 1;
+					this.round += 1;
+				}
 
 			}
 		};
