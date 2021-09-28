@@ -64,6 +64,17 @@
           speed: 4,
         });
 
+        this.nodes.push({
+          id: "gameState",
+          defaultBallSpeed: 3,
+          playerOneScore: 0,
+          playerTwoScore: 0,
+          maxScore: 1,
+          paused: true,
+          end: false,
+          reset: false,
+        });
+
         //======================================================================================================================================================
         // Keycode for W:87, S:83
         // Keycode for arrow up: 38, down: 40
@@ -115,6 +126,7 @@
         let playerOne = this.getNode("racketOne"); // Cache the playerOne.
         let playerTwo = this.getNode("racketTwo"); // Cache the playerTwo.
         let ball = this.getNode("ball"); // Cache the ball.
+        let gameState = this.getNode("gameState");
 
         // Check if player is out of canvas bounds.
         function CheckBoundsPlayer(player) {
@@ -134,6 +146,15 @@
           } else if (ball.y + ball.height > app.height) {
             // else if ball.y + ball.height greater than canvas height. (lower bounds).
             ball.directionY = Math.tan(-angle) * ball.directionX; // then ball y direction is calculated (direction x stays the same).
+          } else if (ball.x + ball.width > app.width) {
+            // else if ball hit the right wall.
+            gameState.playerOneScore += 1; // Player One scored.
+            console.log(gameState.playerOneScore);
+            // Reset game.
+          } else if (ball.x + ball.width < 0) {
+            // else ball hit left wall.
+            gameState.playerTwoScore += 1; // Player Two scored.
+            console.log(gameState.playerTwoScore); // Reset game.
           }
         }
 
