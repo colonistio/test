@@ -9,6 +9,7 @@ var app = {
 
 	//nodes
 	nodes   : [],
+	paused  : false,
 
 	//timing
 	timestamp  : 0,
@@ -18,17 +19,36 @@ var app = {
 	init : function(){
 		this.canvas  = document.getElementById('canvas');
 		this.context = this.canvas.getContext('2d');
+
+		document.addEventListener('keydown', function (key) {
+		    var keycode = (key.keyCode ? key.keyCode : key.which);
+			if (keycode === 32) {
+				app.pause();
+			}
+		});
+
 		this.resize();
 
 		this.render();
 		this.onInit();
 	},
 	render : function(){
+
 		this.clear();
 		this.update();
 
 		window.addEventListener('resize', this.resize);
 		window.requestAnimationFrame(this.render.bind(this));
+	},
+	reset : function() {
+		this.paused = true;
+	},
+	pause : function(state) {
+		this.paused = state ? state : !this.paused;
+		if(this.paused)
+			console.log('app paused.');
+		else
+			console.log('app continues.');
 	},
 	clear  : function(){
 		this.context.clearRect(0, 0, this.width*10, this.height*10);	// bigger space has to be cleared because resized content leave trails

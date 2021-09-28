@@ -10,8 +10,6 @@
 		var brands = ["\uf092", "\uf0d4", "\uf08c", "\uf3bb", "\uf2d8", "\uf1d2", "\uf082", "\uf167", "\uf081"];
 		var ballCode = "\uf1a1";
 		var over = true;
-		var pause = false;
-		var pausedState = false;
 		var lastScoreTime = 0;
 		var rplayer;
 		var lplayer;
@@ -64,7 +62,7 @@
 			});
 
 			this.running = this.over = false;
-			this.pause = false;
+			this.paused = false;
 			this.timer = this.round = 0;
 
 			lplayer = this.getNode('lplayer');
@@ -84,18 +82,6 @@
 			this.context.fillText('Press any key to begin', this.canvas.width / 2, this.canvas.height / 2 + 15);
 		};
 
-		app.reset = function() {
-			this.pause = true;
-		};
-
-		app.pauseGame = function() {
-			this.pause != this.pause;
-		};
-
-		app.unpauseGame = function() {
-			this.pause = false;
-		};
-
 		app.listen = function(){
 			document.addEventListener('keydown', function (key) {
 			    var keycode = (key.keyCode ? key.keyCode : key.which);
@@ -103,20 +89,16 @@
 				if (this.running === false) {
 					this.running = true;
 				}
-				if (keycode === 32) {
-					console.log('space');
-					this.pause = false;
-				}
-				if (!this.pause && keycode === 38)
+				if (!this.paused && keycode === 38)
 					rplayer.move = DIRECTION.UP;
 
-				if (!this.pause && keycode === 40)
+				if (!this.paused && keycode === 40)
 					rplayer.move = DIRECTION.DOWN;
 
-				if (!this.pause && keycode === 87)
+				if (!this.paused && keycode === 87)
 					lplayer.move = DIRECTION.UP;
 
-				if (!this.pause && keycode === 83)
+				if (!this.paused && keycode === 83)
 					lplayer.move = DIRECTION.DOWN;
 			});
 
@@ -350,7 +332,7 @@
 			this.clear();
 			this.drawArena();
 			this.drawItems();
-			if(!this.pause){
+			if(!this.paused){
 				this.handleCollisions();
 			}
 		};
