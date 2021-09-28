@@ -34,6 +34,14 @@
     <script type="text/javascript">
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
+      let p1DownKeyPressed = false;
+      let p1UpKeyPressed = false;
+      let p2DownKeyPressed = false;
+      let p2UpKeyPressed = false;
+
+      document.addEventListener("keydown", handleKeyDownEvent);
+      document.addEventListener("keyup", handleKeyUpEvent);
+
       app.onInit = function () {
         this.canvas = document.getElementById("canvas");
         this.context = this.canvas.getContext("2d");
@@ -78,6 +86,13 @@
 
       app.onUpdate = function (time) {
         // this.getNode("player-one").y++;
+        if (p1DownKeyPressed) {
+          this.getNode("player-one").y += 5;
+          p1DownKeyPressed = false;
+        } else if (p1UpKeyPressed) {
+          this.getNode("player-one").y -= 5;
+          p1UpKeyPressed = false;
+        }
 
         if (Math.cos(this.timestamp / 100) > 0) {
           this.getNode("ball").direction = -1;
@@ -87,6 +102,28 @@
 
         this.getNode("ball").x += this.getNode("ball").direction;
       };
+
+      function handleKeyDownEvent(keyDown) {
+        switch (keyDown.keyCode) {
+          case 87:
+            p1UpKeyPressed = true;
+            break;
+          case 83:
+            p2DownKeyPressed = true;
+            break;
+          case 38:
+            p2UpKeyPressed = true;
+            break;
+          case 40:
+            p2DownKeyPressed = true;
+            break;
+        }
+        // p1DownKeyPressed = keyDown.keyCode == 83 ? true : false;
+      }
+
+      function handleKeyUpEvent(keyUp) {
+        // p1UpKeyPressed = keyUp.keyCode == 87 ? true : false;
+      }
     </script>
   </body>
 </html>
