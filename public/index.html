@@ -32,7 +32,7 @@
 
         this.nodes.push({
           id: "racketOne",
-          x: 10,
+          x: 20,
           y: app.height / 2,
           width: 10,
           height: 50,
@@ -70,10 +70,11 @@
           defaultBallSpeed: 3,
           playerOneScore: 0,
           playerTwoScore: 0,
-          maxScore: 1,
+          maxScore: 3,
           paused: true,
           end: false,
           reset: false,
+          maxBallSpeed: 9,
         });
 
         this.nodes.push({
@@ -214,10 +215,16 @@
             // if ball hit player one racket.
             ball.directionY = Math.tan(angle) * ball.directionX; // and set the ball y-direction to be the opposite departure angle.
             ball.directionX = -ball.directionX; // and set the ball x-direction to the opposite direction.
+            if (ball.speed < gameState.maxBallSpeed) {
+              ball.speed += 0.2;
+            }
           } else if (Collides(ball, playerTwo)) {
             // else ball hit player two racket.
             ball.directionY = Math.tan(angle) * ball.directionX; // and set the ball y-direction to be the opposite departure angle.
             ball.directionX = -ball.directionX; // and set the ball x-direction to the opposite direction.
+            if (ball.speed < gameState.maxBallSpeed) {
+              ball.speed += 0.2;
+            }
           }
         }
 
@@ -313,6 +320,8 @@
         BallHitRacket();
         Continue();
         GameWon();
+
+        console.log(ball.speed);
       };
     </script>
   </body>
