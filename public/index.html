@@ -141,6 +141,16 @@
           }
         }
 
+        // Gets the collision between two objects.
+        function Collides(obj1, obj2) {
+          return (
+            obj1.x < obj2.x + obj2.width &&
+            obj1.x + obj1.width > obj2.x &&
+            obj1.y < obj2.y + obj2.height &&
+            obj1.y + obj1.height > obj2.y
+          );
+        }
+
         // Check if ball is out of canvas bounds.
         function CheckBallBounds() {
           let angle = Math.atan(ball.directionY / ball.directionX); // Get the angle in the direction of the ball.
@@ -160,6 +170,20 @@
             gameState.playerTwoScore += 1; // Player Two scored.
             console.log(gameState.playerTwoScore); // Reset game.
             RestGame(); // Reset game.
+          }
+        }
+
+        // Check if ball hit a racket or not.
+        function BallHitRacket() {
+          let angle = Math.atan(ball.directionY / ball.directionX); // find the angle which ball hit the racket in.
+          if (Collides(ball, playerOne)) {
+            // if ball hit player one racket.
+            ball.directionY = Math.tan(angle) * ball.directionX; // and set the ball y-direction to be the opposite departure angle.
+            ball.directionX = -ball.directionX; // and set the ball x-direction to the opposite direction.
+          } else if (Collides(ball, playerTwo)) {
+            // else ball hit player two racket.
+            ball.directionY = Math.tan(angle) * ball.directionX; // and set the ball y-direction to be the opposite departure angle.
+            ball.directionX = -ball.directionX; // and set the ball x-direction to the opposite direction.
           }
         }
 
@@ -203,6 +227,7 @@
         CheckBoundsPlayer(playerOne);
         CheckBoundsPlayer(playerTwo);
         CheckBallBounds();
+        BallHitRacket();
         Continue();
       };
     </script>
