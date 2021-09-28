@@ -150,12 +150,37 @@
             // else if ball hit the right wall.
             gameState.playerOneScore += 1; // Player One scored.
             console.log(gameState.playerOneScore);
-            // Reset game.
+            RestGame(); // Reset game.
           } else if (ball.x + ball.width < 0) {
             // else ball hit left wall.
             gameState.playerTwoScore += 1; // Player Two scored.
             console.log(gameState.playerTwoScore); // Reset game.
+            RestGame(); // Reset game.
           }
+        }
+
+        function RestGame() {
+          gameState.reset = true;
+
+          // Reset players position.
+          playerOne.y = app.height / 2;
+          playerTwo.y = app.height / 2;
+
+          // Reset ball position.
+          ball.speed = 0;
+          ball.x = app.width / 2;
+          ball.y = app.height / 2;
+
+          ball.directionX = RandomBallXDirection();
+          ball.directionY = RandomBallYDirection();
+          ball.speed = gameState.defaultBallSpeed;
+        }
+
+        function RandomBallXDirection() {
+          return Math.random(1) < 0.5 ? -1 : 1;
+        }
+        function RandomBallYDirection() {
+          return Math.random(1) + 0.2;
         }
 
         playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
