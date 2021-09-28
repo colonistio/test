@@ -38,7 +38,7 @@ var app = {
 
 		for (var index in this.nodes) {
 			var node = this.nodes[index];
-			if (node.id === 'text') {
+			if (node.id === 'score') {
 				this.drawText(node);
 			} else if (node.id === 'ball') {
 				this.context.fillStyle = node.color;
