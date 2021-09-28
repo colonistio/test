@@ -18,6 +18,7 @@ var app = {
 	init : function(){
 		this.canvas  = document.getElementById('canvas');
 		this.context = this.canvas.getContext('2d');
+		this.resize();
 
 		this.render();
 		this.onInit();
@@ -26,12 +27,33 @@ var app = {
 		this.clear();
 		this.update();
 
+		window.addEventListener('resize', this.resize);
 		window.requestAnimationFrame(this.render.bind(this));
 	},
 	clear  : function(){
-		this.context.clearRect(0, 0, this.width, this.height);
+		this.context.clearRect(0, 0, this.width*10, this.height*10);	// bigger space has to be cleared because resized content leave trails
 	},
-	update : function(){
+	resize : function(){
+
+		this.canvas = document.querySelector('canvas');
+
+		var canvasRatio = this.canvas.height / this.canvas.width;
+		var windowRatio = window.innerHeight / window.innerWidth;
+
+		if (windowRatio < canvasRatio) {
+			this.height = window.innerHeight;
+			this.width = this.height / canvasRatio;
+		} else {
+			this.width = window.innerWidth;
+			this.height = this.width * canvasRatio;
+		}
+
+		this.canvas.style.width = this.width + 'px';
+		this.canvas.style.height = this.height + 'px';
+		this.clear();
+		this.onResize();
+    },
+   	update : function(){
 	    var dt = Date.now() - this.lastUpdate;
 
 		this.onUpdate(dt);
@@ -60,6 +82,7 @@ var app = {
 
 	//events
 	onInit   : function(){},
+	onResize : function(){},
 	onUpdate : function(){}
 };
 

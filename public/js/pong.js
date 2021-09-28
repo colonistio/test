@@ -10,23 +10,23 @@
 		var brands = ["\uf092", "\uf0d4", "\uf08c", "\uf3bb", "\uf2d8", "\uf1d2", "\uf082", "\uf167", "\uf081"];
 		var ballCode = "\uf1a1";
 		var over = true;
-		var pause = true;
+		var pause = false;
+		var pausedState = false;
 		var lastScoreTime = 0;
 		var rplayer;
 		var lplayer;
 		var ball;
 
 		app.onInit = function(){
-			this.canvas.style.width = this.canvas.width + 'px';
-			this.canvas.style.height = this.canvas.height + 'px';
-
-			this.round = 1;
+            this.onResize();
+			this.canvas.style.width = this.width + 'px';
+			this.canvas.style.height = this.height + 'px';
 
 			this.nodes.push({
 				id: 'lplayer',
-				width: 18,
-				height: 70,
-				x: 150,
+				width: this.canvas.width / 45,
+				height: this.canvas.height / 6,
+				x: (this.canvas.width / 8),			// 800->150
 				y: (this.canvas.height / 2) - 35,
 				font: null,
 				color  : 'red',
@@ -37,9 +37,9 @@
 
 			this.nodes.push({
 				id: 'rplayer',
-				width: 18,
-				height: 70,
-				x: this.canvas.width - 150,
+				width: this.canvas.width / 45,
+				height: this.canvas.height / 6,
+				x: this.canvas.width - (this.canvas.width / 8),
 				y: (this.canvas.height / 2) - 35,
 				font: null,
 				color  : 'black',
@@ -63,17 +63,17 @@
 				speed: 10
 			});
 
+			this.running = this.over = false;
+			this.pause = false;
+			this.timer = this.round = 0;
+
 			lplayer = this.getNode('lplayer');
 			rplayer = this.getNode('rplayer');
 			ball = this.getNode('ball');
 			this.getNode('lplayer').speed = 8;
 			this.getNode('rplayer').speed = 8;
-			this.running = this.over = false;
-			this.pause = true;
-			this.timer = this.round = 0;
 			this.turn = this.getNode('lplayer').id;
 
-			app.menu();
 			app.listen();
 		};
 
@@ -89,7 +89,7 @@
 		};
 
 		app.pauseGame = function() {
-			this.pause = true;
+			this.pause != this.pause;
 		};
 
 		app.unpauseGame = function() {
@@ -149,18 +149,18 @@
 			this.context.stroke();
 
 			// Draw the players score
-			this.context.font = '100px Courier New';
+			this.context.font = Math.round(this.canvas.width/12) + 'px Courier New';
 			this.context.textAlign = 'center';
 			this.context.fillStyle = '#000';
 
 			var srplayer = this.getNode('rplayer').score ? this.getNode('rplayer').score.toString() : '0';
-			this.context.fillText(srplayer, (this.canvas.width / 2) - 300, 200);
+			this.context.fillText(srplayer, (this.canvas.width / 2) - (this.canvas.width / 2)+30, (this.canvas.height / 2) - 20);
 
 			var slplayer = this.getNode('lplayer').score ? this.getNode('lplayer').score.toString() : '0';
-			this.context.fillText(slplayer, (this.canvas.width / 2) + 300, 200);
+			this.context.fillText(slplayer, (this.canvas.width / 2) + (this.canvas.width / 2)-30, (this.canvas.height / 2) - 20);
 
-			this.context.font = '30px Courier New';
-			this.context.fillText('Round ' + (app.round + 1), (this.canvas.width / 2)+8, 35);
+			this.context.font = Math.round(this.canvas.width/24) + 'px Courier New';
+			this.context.fillText('Round ' + (app.round + 1), (this.canvas.width / 2) + 8, (this.canvas.height / 6) - 20);
 		};
 
 		app._resetTurn = function(victor, loser) {
@@ -294,7 +294,7 @@
 			if (this.getNode('rplayer').score === rounds[this.round]) {
 
 				if (!rounds[this.round + 1] && this.round) {
-					if(this.round >= rounds.length-1){
+					if(this.round >= rounds.length - 1){
 						console.log('game finished.');
 						this.over = true;
 						this.round = 0;
@@ -319,7 +319,7 @@
 			else if (this.getNode('lplayer').score === rounds[this.round]) {
 
 				if (!rounds[this.round + 1] && this.round) {
-					if(this.round >= rounds.length-1){
+					if(this.round >= rounds.length - 1){
 						console.log('game finished.');
 						this.over = true;
 						this.round = 0;
@@ -341,7 +341,13 @@
 			}
 		};
 
+		app.onResize = function() {
+			app.drawArena();
+			app.drawItems();
+		};
+
 		app.onUpdate = function(time) {
+			this.clear();
 			this.drawArena();
 			this.drawItems();
 			if(!this.pause){
