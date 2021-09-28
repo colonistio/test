@@ -15,6 +15,8 @@
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
       app.onInit = function () {
+        const app = this;
+
         // Add margin safety for canvas.
         let safetyMargin = 30;
 
@@ -48,6 +50,51 @@
           color: "red",
           direction: 0,
           speed: 4,
+        });
+
+        //======================================================================================================================================================
+        // Keycode for W:87, S:83
+        // Keycode for arrow up: 38, down: 40
+        //======================================================================================================================================================
+        // Event listener for keydown.
+        document.addEventListener("keydown", function (e) {
+          // this returns the document so we need to save variables for access.
+          switch (e.which) {
+            case 83:
+              app.getNode("racketOne").direction = -1;
+              break;
+            case 87:
+              app.getNode("racketOne").direction = 1;
+              break;
+            case 38:
+              app.getNode("racketTwo").direction = 1;
+              break;
+            case 40:
+              app.getNode("racketTwo").direction = -1;
+              break;
+            default:
+              break;
+          }
+        });
+
+        // Event listener for keyup.
+        document.addEventListener("keyup", function (e) {
+          switch (e.which) {
+            case 83:
+              app.getNode("racketOne").direction = 0;
+              break;
+            case 87:
+              app.getNode("racketOne").direction = 0;
+              break;
+            case 38:
+              app.getNode("racketTwo").direction = 0;
+              break;
+            case 40:
+              app.getNode("racketTwo").direction = 0;
+              break;
+            default:
+              break;
+          }
         });
       };
 
