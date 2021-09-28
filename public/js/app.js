@@ -44,7 +44,7 @@ var app = {
 				this.context.fillStyle = node.color;
 				this.context.beginPath();
 				this.context.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
-				this.context.stroke();
+				this.context.fill();
 			}
 			else {
 				this.context.fillStyle = node.color;
