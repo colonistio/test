@@ -126,6 +126,9 @@
         playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
         playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
 
+        ball.x += ball.directionX * ball.speed; // Move ball horizontally based on direction and speed.
+        ball.y += ball.directionY * ball.speed; // Move ball vertically based on direction and speed.
+
         CheckBoundsPlayer(playerOne);
         CheckBoundsPlayer(playerTwo);
       };
