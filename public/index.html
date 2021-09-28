@@ -125,6 +125,18 @@
           }
         }
 
+        // Check if ball is out of canvas bounds.
+        function CheckBallBounds() {
+          let angle = Math.atan(ball.directionY / ball.directionX); // Get the angle in the direction of the ball.
+          if (ball.y < 0) {
+            // if ball.y less than zero. (upper bounds).
+            ball.directionY = Math.tan(-angle) * ball.directionX; // then ball y direction is calculated (direction x stays the same).
+          } else if (ball.y + ball.height > app.height) {
+            // else if ball.y + ball.height greater than canvas height. (lower bounds).
+            ball.directionY = Math.tan(-angle) * ball.directionX; // then ball y direction is calculated (direction x stays the same).
+          }
+        }
+
         playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
         playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
 
@@ -133,6 +145,7 @@
 
         CheckBoundsPlayer(playerOne);
         CheckBoundsPlayer(playerTwo);
+        CheckBallBounds();
       };
     </script>
   </body>
