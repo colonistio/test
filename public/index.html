@@ -95,6 +95,10 @@
             case 40:
               app.getNode("racketTwo").direction = -1;
               break;
+            case 32:
+              app.getNode("gameState").paused =
+                !app.getNode("gameState").paused;
+              break;
             default:
               break;
           }
@@ -183,15 +187,23 @@
           return Math.random(1) + 0.2;
         }
 
-        playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
-        playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
+        function Continue() {
+          // if game is paused or is resetting or endded don't move anything.
+          if (gameState.paused || gameState.reset || gameState.end) {
+            return;
+          }
 
-        ball.x += ball.directionX * ball.speed; // Move ball horizontally based on direction and speed.
-        ball.y += ball.directionY * ball.speed; // Move ball vertically based on direction and speed.
+          playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
+          playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
+
+          ball.x += ball.directionX * ball.speed; // Move ball horizontally based on direction and speed.
+          ball.y += ball.directionY * ball.speed; // Move ball vertically based on direction and speed.
+        }
 
         CheckBoundsPlayer(playerOne);
         CheckBoundsPlayer(playerTwo);
         CheckBallBounds();
+        Continue();
       };
     </script>
   </body>
