@@ -27,6 +27,28 @@
         // Set the width and height of canvas in render.
         this.width = window.innerWidth - safetyMargin;
         this.height = window.innerHeight - safetyMargin;
+
+        this.nodes.push({
+          id: "racketOne",
+          x: 10,
+          y: app.height / 2,
+          width: 10,
+          height: 50,
+          color: "red",
+          direction: 0,
+          speed: 4,
+        });
+
+        this.nodes.push({
+          id: "racketTwo",
+          x: app.width - 20,
+          y: app.height / 2,
+          width: 10,
+          height: 50,
+          color: "red",
+          direction: 0,
+          speed: 4,
+        });
       };
 
       app.onUpdate = function (time) {};
