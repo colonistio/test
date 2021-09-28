@@ -67,8 +67,7 @@ var app = {
 	drawText: function (node) {
 		this.context.font = "30px Arial";
 		this.context.fillText(node.text, node.x, node.y);
-	},
-	reset: function () {
+	}, reset: function () {
 		var gameState = this.getNode('Game State');
 		if (!gameState) { return; }
 
@@ -79,8 +78,8 @@ var app = {
 		gameState.end = false;
 		gameState.reset = false;
 
-		this.getNode('text').x = this.getNode('text').x;
-		this.getNode('text').text = '0 - 0';
+		this.getNode('score').x = this.getNode('score').x;
+		this.getNode('score').text = '0 - 0';
 	},
 	pause: function () {
 		var gameState = this.getNode('Game State');
