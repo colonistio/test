@@ -69,7 +69,7 @@ var app = {
 		this.context.fillText(node.text, node.x, node.y);
 	}, reset: function () {
 		var gameState = this.getNode('gameState');
-		if (!gameState) { return; }
+		if (gameState == undefined) { return; }
 
 		gameState.playerTwoScore = 0;
 		gameState.playerOneScore = 0;
@@ -83,6 +83,8 @@ var app = {
 	},
 	pause: function () {
 		var gameState = this.getNode('gameState');
+		if (gameState == undefined) { return; }
+
 		if (gameState.end) {
 			app.reset();
 		} else if (gameState.reset) {

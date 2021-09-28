@@ -142,6 +142,11 @@
 
         // Check if player is out of canvas bounds.
         function CheckBoundsPlayer(player) {
+          if (player == undefined) {
+            console.log("CheckBoundsPlayer: Player is undefined");
+            return;
+          }
+
           if (player.y < 0) {
             player.y = 0;
           } else if (player.y + player.height > app.height) {
@@ -151,6 +156,17 @@
 
         // Gets the collision between two objects.
         function Collides(obj1, obj2) {
+          // if any of the objects is undefined return.
+          if (obj1 == undefined) {
+            console.log("Collides: First argument is undefined!");
+            return;
+          }
+
+          if (obj2 == undefined) {
+            console.log("Collides: Second argument is undefined!");
+            return;
+          }
+
           return (
             obj1.x < obj2.x + obj2.width &&
             obj1.x + obj1.width > obj2.x &&
@@ -161,6 +177,11 @@
 
         // Check if ball is out of canvas bounds.
         function CheckBallBounds() {
+          if (ball == undefined) {
+            console.log("CheckBallBounds: ball is undefined");
+            return;
+          }
+
           let angle = Math.atan(ball.directionY / ball.directionX); // Get the angle in the direction of the ball.
           if (ball.y < 0) {
             // if ball.y less than zero. (upper bounds).
@@ -183,6 +204,11 @@
 
         // Check if ball hit a racket or not.
         function BallHitRacket() {
+          if (ball == undefined) {
+            console.log("BallHitRacket: ball is undefined");
+            return;
+          }
+
           let angle = Math.atan(ball.directionY / ball.directionX); // find the angle which ball hit the racket in.
           if (Collides(ball, playerOne)) {
             // if ball hit player one racket.
@@ -196,6 +222,17 @@
         }
 
         function RestGame() {
+          if (
+            gameState == undefined ||
+            playerOne == undefined ||
+            playerTwo == undefined ||
+            ball == undefined ||
+            scoreText == undefined
+          ) {
+            console.log("RestGame: Undefined variable detected!");
+            return;
+          }
+
           gameState.reset = true;
 
           // Reset players position.
@@ -216,6 +253,11 @@
         }
 
         function GameWon() {
+          if (gameState == undefined) {
+            console.log("GameWon: Game state is undefined");
+            return;
+          }
+
           if (!gameState.end) {
             if (
               gameState.playerOneScore === gameState.maxScore &&
@@ -243,6 +285,16 @@
         }
 
         function Continue() {
+          if (gameState == undefined) {
+            console.log("Continue: Game state is undefined");
+            return;
+          }
+
+          if (playerOne == undefined || playerTwo == undefined) {
+            console.log("Continue: Player is undefined.");
+            return;
+          }
+
           // if game is paused or is resetting or endded don't move anything.
           if (gameState.paused || gameState.reset || gameState.end) {
             return;
