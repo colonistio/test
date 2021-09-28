@@ -68,6 +68,31 @@ var app = {
 		this.context.font = "30px Arial";
 		this.context.fillText(node.text, node.x, node.y);
 	},
+	reset: function () {
+		var gameState = this.getNode('Game State');
+		if (!gameState) { return; }
+
+		gameState.playerTwoScore = 0;
+		gameState.playerOneScore = 0;
+
+		gameState.paused = false;
+		gameState.end = false;
+		gameState.reset = false;
+
+		this.getNode('text').x = this.getNode('text').x;
+		this.getNode('text').text = '0 - 0';
+	},
+	pause: function () {
+		var gameState = this.getNode('Game State');
+		if (gameState.end) {
+			app.reset();
+		} else if (gameState.reset) {
+			gameState.reset = false;
+			gameState.paused = false;
+		} else {
+			gameState.paused = !gameState.paused;
+		}
+	},
 
 	//events
 	onInit: function () { },
