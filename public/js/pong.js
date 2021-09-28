@@ -48,11 +48,11 @@
 
 			this.nodes.push({
 				id: 'ball',
-				width: 48,
-				height: 48,
+				width: Math.round(this.canvas.width/16),
+				height: Math.round(this.canvas.width/16),
 				fontCode: ballCode,
 				fontColor: '#000',
-				fontSize: '48px',
+				fontSize: Math.round(this.canvas.width/16) + 'px',
 				color  : 'transparent',
 				x: (this.canvas.width / 2) - 24,
 				y: (this.canvas.height / 2) - 24,
@@ -73,13 +73,6 @@
 			this.turn = this.getNode('lplayer').id;
 
 			app.listen();
-		};
-
-		app.menu = function () {
-			this.context.font = '50px Courier New';
-			this.context.fillRect(this.canvas.width / 2 - 350, this.canvas.height / 2 - 48, 700, 100);
-			this.context.fillStyle = '#000';
-			this.context.fillText('Press any key to begin', this.canvas.width / 2, this.canvas.height / 2 + 15);
 		};
 
 		app.listen = function(){
