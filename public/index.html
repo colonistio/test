@@ -193,12 +193,12 @@
           } else if (ball.x + ball.width > app.width) {
             // else if ball hit the right wall.
             gameState.playerOneScore += 1; // Player One scored.
-            console.log(gameState.playerOneScore);
+            // console.log(gameState.playerOneScore);
             RestGame(); // Reset game.
           } else if (ball.x + ball.width < 0) {
             // else ball hit left wall.
             gameState.playerTwoScore += 1; // Player Two scored.
-            console.log(gameState.playerTwoScore); // Reset game.
+            // console.log(gameState.playerTwoScore); // Reset game.
             RestGame(); // Reset game.
           }
         }
@@ -320,8 +320,6 @@
         BallHitRacket();
         Continue();
         GameWon();
-
-        console.log(ball.speed);
       };
     </script>
   </body>
