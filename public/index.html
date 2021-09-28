@@ -103,8 +103,20 @@
         let playerOne = this.getNode("racketOne"); // Cache the playerOne.
         let playerTwo = this.getNode("racketTwo"); // Cache the playerTwo.
 
+        // Check if player is out of canvas bounds.
+        function CheckBoundsPlayer(player) {
+          if (player.y < 0) {
+            player.y = 0;
+          } else if (player.y + player.height > app.height) {
+            player.y = app.height - player.height;
+          }
+        }
+
         playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
         playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
+
+        CheckBoundsPlayer(playerOne);
+        CheckBoundsPlayer(playerTwo);
       };
     </script>
   </body>
