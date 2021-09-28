@@ -40,7 +40,13 @@ var app = {
 			var node = this.nodes[index];
 			if (node.id === 'text') {
 				this.drawText(node);
-			} else {
+			} else if (node.id === 'ball') {
+				this.context.fillStyle = node.color;
+				this.context.beginPath();
+				this.context.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+				this.context.stroke();
+			}
+			else {
 				this.context.fillStyle = node.color;
 				this.context.fillRect(node.x, node.y, node.width, node.height);
 			}
