@@ -98,7 +98,14 @@
         });
       };
 
-      app.onUpdate = function (time) {};
+      app.onUpdate = function (time) {
+        // Caching some variables for ease of access.
+        let playerOne = this.getNode("racketOne"); // Cache the playerOne.
+        let playerTwo = this.getNode("racketTwo"); // Cache the playerTwo.
+
+        playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
+        playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
+      };
     </script>
   </body>
 </html>
