@@ -106,6 +106,14 @@
             case 32:
               app.getNode("gameState").paused =
                 !app.getNode("gameState").paused;
+
+              app.getNode("gameState").reset = false;
+              app.getNode("gameState").end = false;
+
+              app.getNode("gameState").playerOneScore = 0;
+              app.getNode("gameState").playerTwo = 0;
+
+              console.log(app.getNode("gameState"));
               break;
             default:
               break;
@@ -216,6 +224,26 @@
             gameState.playerOneScore + " - " + gameState.playerTwoScore;
         }
 
+        function GameWon() {
+          if (!gameState.end) {
+            if (
+              gameState.playerOneScore === gameState.maxScore &&
+              gameState.maxScore != undefined
+            ) {
+              scoreText.text =
+                "Player One has won the game! - Press space to restart";
+              gameState.end = true;
+            } else if (
+              gameState.playerTwoScore === gameState.maxScore &&
+              gameState.maxScore != undefined
+            ) {
+              scoreText.text =
+                "Player Two has won the game! - Press space to restart";
+              gameState.end = true;
+            }
+          }
+        }
+
         function RandomBallXDirection() {
           return Math.random(1) < 0.5 ? -1 : 1;
         }
@@ -241,6 +269,7 @@
         CheckBallBounds();
         BallHitRacket();
         Continue();
+        GameWon();
       };
     </script>
   </body>
