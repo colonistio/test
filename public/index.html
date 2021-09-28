@@ -59,7 +59,8 @@
           width: 10,
           height: 10,
           color: "black",
-          direction: 0,
+          directionX: 1,
+          directionY: -0.8,
           speed: 4,
         });
 
@@ -113,6 +114,7 @@
         // Caching some variables for ease of access.
         let playerOne = this.getNode("racketOne"); // Cache the playerOne.
         let playerTwo = this.getNode("racketTwo"); // Cache the playerTwo.
+        let ball = this.getNode("ball"); // Cache the ball.
 
         // Check if player is out of canvas bounds.
         function CheckBoundsPlayer(player) {
