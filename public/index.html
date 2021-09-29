@@ -35,6 +35,9 @@
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
       var speedOfPaddle1 = 0;
       var speedOfPaddle2 = 0;
+      var xCoordDirection = 0;
+      var yCoordDirection = 0;
+
       app.onInit = function () {
         this.canvas = document.getElementById("canvas");
         this.context = this.canvas.getContext("2d");
@@ -64,6 +67,7 @@
           width: this.getNode("player-one").width,
           height: this.getNode("player-one").width,
           color: "white",
+          ballSpeed: 3,
           direction: 0,
         });
 
@@ -87,8 +91,6 @@
             } else if (e.keyCode == 40) {
               speedOfPaddle2 = +2;
             }
-          } else {
-            ballSpeed = 3;
           }
         });
 
@@ -104,30 +106,36 @@
           }
         });
 
-        this.getNode("ball").direction = -1;
+        if (Math.random() < 0.5) {
+          var direction = (this.getNode("ball").direction = -1);
+        } else {
+          var direction = (this.getNode("ball").direction = +1);
+        }
+        xCoordDirection = direction * 2;
+        yCoordDirection = direction * Math.random();
       };
 
-      var ballDirectionl;
-      var ballSpeed = 0;
-
-      function startBall() {
-        if (Math.random() < 0.5) {
-          var side = 1;
-        } else {
-          var side = -1;
-        }
-        ballDirection = side * (Math.random() * 6 + 5);
-        ballSpeed = Math.random() * 6 + 5;
-      }
+      //   function startBall() {
+      //     if (Math.random() < 0.5) {
+      //       var side = 1;
+      //     } else {
+      //       var side = -1;
+      //     }
+      //     ballDirection = side * (Math.random() * 6 + 5);
+      //     ballSpeed = Math.random() * 6 + 5;
+      //   }
 
       app.onUpdate = function (time) {
-        this.canvas = document.getElementById("canvas");
+        // this.canvas = document.getElementById("canvas");
         var playerOne = app.getNode("player-one");
         var playerTwo = app.getNode("player-two");
         var ball = app.getNode("ball");
 
         playerOne.y += speedOfPaddle1;
         playerTwo.y += speedOfPaddle2;
+
+        ball.x += xCoordDirection;
+        ball.y += yCoordDirection;
 
         // preventing paddle from going off canvas
         if (playerOne.y <= 0) {
@@ -152,12 +160,11 @@
           ball.y <= player.y + player.height
         ) {
           //if bottom him
-          this.getNode("ball").direction *= -1;
-          if (ball.y > player.y + player.height / 2) {
-          } else {
-            //-45 degree
-            angle = (Math.PI / 4) * -1;
-          }
+          xCoordDirection = -xCoordDirection;
+          //   yCoordDirection = -yCoordDirection;
+          //   if (ball.y > player.y + player.height / 2) {
+          //   } else {
+          //   }
         }
 
         // if (ball.y <= playerOne.y) {
@@ -165,7 +172,11 @@
         // } else {
         //   this.getNode("ball").direction = 1;
         // }
-        this.getNode("ball").x += this.getNode("ball").direction;
+        // ball.x += Math.cos(45) * 3;
+        // ball.y += Math.sin(ball.direction) * ball.speed;
+        // ball.x += ball.speed;
+        // ball.y += ball.speed;
+        // this.getNode("ball").x += this.getNode("ball").direction;
       };
     </script>
   </body>
