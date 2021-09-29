@@ -103,10 +103,13 @@
             speedOfPaddle2 = 0;
           }
         });
+
+        this.getNode("ball").direction = -1;
       };
 
       var ballDirectionl;
       var ballSpeed = 0;
+
       function startBall() {
         if (Math.random() < 0.5) {
           var side = 1;
@@ -126,6 +129,7 @@
         playerOne.y += speedOfPaddle1;
         playerTwo.y += speedOfPaddle2;
 
+        // preventing paddle from going off canvas
         if (playerOne.y <= 0) {
           playerOne.y = 0;
         }
@@ -138,6 +142,24 @@
         if (playerTwo.y >= canvas.height - playerTwo.height) {
           playerTwo.y = canvas.height - playerTwo.height;
         }
+
+        let player = ball.x < canvas.width / 2 ? playerOne : playerTwo;
+
+        if (
+          (player.x == ball.x + ball.width / 2 ||
+            player.x + player.width == ball.x - ball.width / 2) &&
+          player.y <= ball.y &&
+          ball.y <= player.y + player.height
+        ) {
+          //if bottom him
+          this.getNode("ball").direction *= -1;
+          if (ball.y > player.y + player.height / 2) {
+          } else {
+            //-45 degree
+            angle = (Math.PI / 4) * -1;
+          }
+        }
+
         // if (ball.y <= playerOne.y) {
         //   this.getNode("ball").direction = -1;
         // } else {
