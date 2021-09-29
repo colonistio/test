@@ -34,14 +34,6 @@
     <script type="text/javascript">
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
-      let p1DownKeyPressed = false;
-      let p1UpKeyPressed = false;
-      let p2DownKeyPressed = false;
-      let p2UpKeyPressed = false;
-
-      document.addEventListener("keydown", handleKeyDownEvent);
-      document.addEventListener("keyup", handleKeyUpEvent);
-
       app.onInit = function () {
         this.canvas = document.getElementById("canvas");
         this.context = this.canvas.getContext("2d");
@@ -84,46 +76,65 @@
         });
       };
 
+      var speedOfPaddle1 = 0;
+      var speedOfPaddle2 = 0;
+
       app.onUpdate = function (time) {
-        // this.getNode("player-one").y++;
-        if (p1DownKeyPressed) {
-          this.getNode("player-one").y += 5;
-          p1DownKeyPressed = false;
-        } else if (p1UpKeyPressed) {
-          this.getNode("player-one").y -= 5;
-          p1UpKeyPressed = false;
+        this.canvas = document.getElementById("canvas");
+        var playerOne = app.getNode("player-one");
+        var playerTwo = app.getNode("player-two");
+
+        playerOne.y += speedOfPaddle1;
+        playerTwo.y += speedOfPaddle2;
+
+        document.addEventListener("keydown", (e) => {
+          if (e.keyCode == 87) {
+            speedOfPaddle1 = -2;
+          } else if (
+            e.keyCode == 83 &&
+            playerOne.y < canvas.height - playerOne.height
+          ) {
+            speedOfPaddle1 = +2;
+          } else if (e.keyCode == 38) {
+            speedOfPaddle2 = -2;
+          } else if (e.keyCode == 40) {
+            speedOfPaddle2 = +2;
+          }
+        });
+
+        document.addEventListener("keyup", (e) => {
+          if (e.keyCode == 87) {
+            speedOfPaddle1 = 0;
+          } else if (e.keyCode == 83) {
+            speedOfPaddle1 = 0;
+          } else if (e.keyCode == 38) {
+            speedOfPaddle2 = 0;
+          } else if (e.keyCode == 40) {
+            speedOfPaddle2 = 0;
+          }
+        });
+
+        if (playerOne.y <= 0) {
+          playerOne.y = 0;
+        }
+        if (playerTwo.y <= 0) {
+          playerTwo.y = 0;
+        }
+        if (playerOne.y >= canvas.height - playerOne.height) {
+          playerOne.y = canvas.height - playerOne.height;
+        }
+        if (playerTwo.y >= canvas.height - playerTwo.height) {
+          playerTwo.y = canvas.height - playerTwo.height;
         }
 
         if (Math.cos(this.timestamp / 100) > 0) {
-          this.getNode("ball").direction = -1;
+          this.getNode("ball").direction = -2;
         } else {
-          this.getNode("ball").direction = 1;
+          this.getNode("ball").direction = 2;
         }
 
         this.getNode("ball").x += this.getNode("ball").direction;
       };
-
-      function handleKeyDownEvent(keyDown) {
-        switch (keyDown.keyCode) {
-          case 87:
-            p1UpKeyPressed = true;
-            break;
-          case 83:
-            p2DownKeyPressed = true;
-            break;
-          case 38:
-            p2UpKeyPressed = true;
-            break;
-          case 40:
-            p2DownKeyPressed = true;
-            break;
-        }
-        // p1DownKeyPressed = keyDown.keyCode == 83 ? true : false;
-      }
-
-      function handleKeyUpEvent(keyUp) {
-        // p1UpKeyPressed = keyUp.keyCode == 87 ? true : false;
-      }
     </script>
   </body>
 </html>
