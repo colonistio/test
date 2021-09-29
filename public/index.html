@@ -37,6 +37,9 @@
       var speedOfPaddle2 = 0;
       var xCoordDirection = 0;
       var yCoordDirection = 0;
+      var isGamePaused = false;
+      var savedXCoordDirection = 0;
+      var savedYCoordDirection = 0;
 
       app.onInit = function () {
         this.canvas = document.getElementById("canvas");
@@ -81,7 +84,10 @@
         });
 
         document.addEventListener("keydown", (e) => {
-          if (e.keyCode != 32) {
+          if (e.keyCode == 32) {
+            app.pause();
+          }
+          if (!isGamePaused) {
             if (e.keyCode == 87) {
               speedOfPaddle1 = -2;
             } else if (e.keyCode == 83) {
@@ -107,12 +113,17 @@
         });
 
         if (Math.random() < 0.5) {
-          var direction = (this.getNode("ball").direction = -1);
+          var xdirection = (this.getNode("ball").direction = -1);
         } else {
-          var direction = (this.getNode("ball").direction = +1);
+          var xdirection = (this.getNode("ball").direction = +1);
         }
-        xCoordDirection = direction * 2;
-        yCoordDirection = direction * Math.random();
+        if (Math.random() < 0.5) {
+          var ydirection = (this.getNode("ball").direction = -1);
+        } else {
+          var ydirection = (this.getNode("ball").direction = +1);
+        }
+        xCoordDirection = ydirection * 2;
+        yCoordDirection = xdirection * 2;
       };
 
       //   function startBall() {
@@ -153,31 +164,57 @@
 
         let player = ball.x < canvas.width / 2 ? playerOne : playerTwo;
 
-        if (
-          (player.x == ball.x + ball.width / 2 ||
-            player.x + player.width == ball.x - ball.width / 2) &&
-          player.y <= ball.y &&
-          ball.y <= player.y + player.height
-        ) {
-          //if bottom him
-          xCoordDirection = -xCoordDirection;
-          //   yCoordDirection = -yCoordDirection;
-          //   if (ball.y > player.y + player.height / 2) {
-          //   } else {
-          //   }
+        //ball from leaving top and bottom
+        if (ball.y <= 12 / 2 || ball.y >= canvas.height - ball.width / 2) {
+          yCoordDirection = -yCoordDirection;
         }
 
-        // if (ball.y <= playerOne.y) {
-        //   this.getNode("ball").direction = -1;
-        // } else {
-        //   this.getNode("ball").direction = 1;
-        // }
-        // ball.x += Math.cos(45) * 3;
-        // ball.y += Math.sin(ball.direction) * ball.speed;
-        // ball.x += ball.speed;
-        // ball.y += ball.speed;
-        // this.getNode("ball").x += this.getNode("ball").direction;
+        if (isBallTouchingPaddle(player, ball, playerOne, playerTwo)) {
+          xCoordDirection = -xCoordDirection;
+        }
       };
+
+      isBallTouchingPaddle = (player, ball, playerOne, playerTwo) => {
+        //player 2
+        var isBallHittingYCoordinates =
+          player.y <= ball.y && ball.y <= player.y + player.height
+            ? true
+            : false;
+
+        if (
+          player.x == ball.x + ball.width / 2 &&
+          player == playerTwo &&
+          isBallHittingYCoordinates
+        ) {
+          return true;
+        } else if (
+          player.x + player.width == ball.x - ball.width / 2 &&
+          player == playerOne &&
+          isBallHittingYCoordinates
+        )
+          return true;
+        else {
+          return false;
+        }
+        // player.x == ball.x + ball.width / 2 ||
+        //           player.x + player.width == ball.x - ball.width / 2)
+      };
+
+      app.pause = function () {
+        if (xCoordDirection == 0) {
+          isGamePaused = false;
+          xCoordDirection = savedXCoordDirection;
+          yCoordDirection = savedYCoordDirection;
+        } else {
+          savedXCoordDirection = xCoordDirection;
+          savedYCoordDirection = yCoordDirection;
+          xCoordDirection = 0;
+          yCoordDirection = 0;
+          isGamePaused = true;
+        }
+      };
+
+      app.reset = function () {};
     </script>
   </body>
 </html>

@@ -52,6 +52,12 @@ var app = {
     this.lastUpdate = Date.now();
     this.timestamp += dt;
   },
+  pause: function () {
+    this.pause();
+  },
+  reset: function () {
+    this.reset();
+  },
   getNode: function (id) {
     for (var index in this.nodes) {
       var node = this.nodes[index];
