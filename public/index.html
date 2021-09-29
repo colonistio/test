@@ -33,15 +33,16 @@
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript">
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
-
+      var speedOfPaddle1 = 0;
+      var speedOfPaddle2 = 0;
       app.onInit = function () {
         this.canvas = document.getElementById("canvas");
         this.context = this.canvas.getContext("2d");
 
         this.nodes.push({
           id: "player-one",
-          x: canvas.width + canvas.width * 0.01 - canvas.width,
-          y: (canvas.height - canvas.height * 0.2) / 2,
+          x: 10,
+          y: canvas.height / 2 - (canvas.height * 0.2) / 2,
           width: canvas.width * 0.01,
           height: canvas.height * 0.2,
           color: "white",
@@ -49,8 +50,8 @@
 
         this.nodes.push({
           id: "player-two",
-          x: canvas.width - canvas.width * 0.02,
-          y: (canvas.height - canvas.height * 0.2) / 2,
+          x: canvas.width - (10 + canvas.width * 0.01),
+          y: canvas.height / 2 - (canvas.height * 0.2) / 2,
           width: canvas.width * 0.01,
           height: canvas.height * 0.2,
           color: "white",
@@ -58,47 +59,36 @@
 
         this.nodes.push({
           id: "ball",
-          x: (canvas.width - this.getNode("player-one").width * 1) / 2,
-          y: (canvas.height - this.getNode("player-one").width * 1) / 2,
-          width: this.getNode("player-one").width * 1,
-          height: this.getNode("player-one").width * 1,
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          width: this.getNode("player-one").width,
+          height: this.getNode("player-one").width,
           color: "white",
           direction: 0,
         });
 
         this.nodes.push({
           id: "line",
-          x: (canvas.width - this.getNode("player-one").width * 1) / 2,
+          x: canvas.width / 2 - 3.5,
           y: 0,
           width: 7,
           height: canvas.height,
           color: "white",
         });
-      };
-
-      var speedOfPaddle1 = 0;
-      var speedOfPaddle2 = 0;
-
-      app.onUpdate = function (time) {
-        this.canvas = document.getElementById("canvas");
-        var playerOne = app.getNode("player-one");
-        var playerTwo = app.getNode("player-two");
-
-        playerOne.y += speedOfPaddle1;
-        playerTwo.y += speedOfPaddle2;
 
         document.addEventListener("keydown", (e) => {
-          if (e.keyCode == 87) {
-            speedOfPaddle1 = -2;
-          } else if (
-            e.keyCode == 83 &&
-            playerOne.y < canvas.height - playerOne.height
-          ) {
-            speedOfPaddle1 = +2;
-          } else if (e.keyCode == 38) {
-            speedOfPaddle2 = -2;
-          } else if (e.keyCode == 40) {
-            speedOfPaddle2 = +2;
+          if (e.keyCode != 32) {
+            if (e.keyCode == 87) {
+              speedOfPaddle1 = -2;
+            } else if (e.keyCode == 83) {
+              speedOfPaddle1 = +2;
+            } else if (e.keyCode == 38) {
+              speedOfPaddle2 = -2;
+            } else if (e.keyCode == 40) {
+              speedOfPaddle2 = +2;
+            }
+          } else {
+            ballSpeed = 3;
           }
         });
 
@@ -113,6 +103,28 @@
             speedOfPaddle2 = 0;
           }
         });
+      };
+
+      var ballDirectionl;
+      var ballSpeed = 0;
+      function startBall() {
+        if (Math.random() < 0.5) {
+          var side = 1;
+        } else {
+          var side = -1;
+        }
+        ballDirection = side * (Math.random() * 6 + 5);
+        ballSpeed = Math.random() * 6 + 5;
+      }
+
+      app.onUpdate = function (time) {
+        this.canvas = document.getElementById("canvas");
+        var playerOne = app.getNode("player-one");
+        var playerTwo = app.getNode("player-two");
+        var ball = app.getNode("ball");
+
+        playerOne.y += speedOfPaddle1;
+        playerTwo.y += speedOfPaddle2;
 
         if (playerOne.y <= 0) {
           playerOne.y = 0;
@@ -126,13 +138,11 @@
         if (playerTwo.y >= canvas.height - playerTwo.height) {
           playerTwo.y = canvas.height - playerTwo.height;
         }
-
-        if (Math.cos(this.timestamp / 100) > 0) {
-          this.getNode("ball").direction = -2;
-        } else {
-          this.getNode("ball").direction = 2;
-        }
-
+        // if (ball.y <= playerOne.y) {
+        //   this.getNode("ball").direction = -1;
+        // } else {
+        //   this.getNode("ball").direction = 1;
+        // }
         this.getNode("ball").x += this.getNode("ball").direction;
       };
     </script>
