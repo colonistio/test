@@ -52,7 +52,7 @@
         // adding player one to our nodes array
         this.nodes.push({
           id: "player-one",
-          x: 10,
+          x: canvas.width / 80,
           y: canvas.height / 2 - (canvas.height * 0.2) / 2,
           width: canvas.width * 0.01,
           height: canvas.height * 0.2,
@@ -61,7 +61,7 @@
         // adding player two to our nodes array
         this.nodes.push({
           id: "player-two",
-          x: canvas.width - (10 + canvas.width * 0.01),
+          x: canvas.width - (canvas.width / 80 + canvas.width * 0.01),
           y: canvas.height / 2 - (canvas.height * 0.2) / 2,
           width: canvas.width * 0.01,
           height: canvas.height * 0.2,

@@ -1,12 +1,16 @@
 # Talha's Colonist Test - Ping Pong Game
 
-Authors: `goktugyil` `TalhaKhamoor`
+Authors: `TalhaKhamoor` `goktugyil`
 Implemented a ping pong game according to the template provided.
 
 ## Steps Completed Before Starting Project
 
 - Forked repository
 - Created a new branch and switched into it.
+
+## How To Run App
+
+To run the app, download application off the repo. Make sure you have node.js installed. Go into your terminal and navigate to the folder that contains the index.js file. Use npm init to setup/create npm package. Use npm to install express. run node node index.js to start application.
 
 ## Starting Template
 
@@ -33,20 +37,3 @@ Most of app.js was provided aswell as the index.js file. Some working functional
 - Added score system for the game and used the drawText functionality on game.
 - Added resize functionality
 - Made the ball round
-
-## After Finishing
-
-- On your repository create a PR merging your feature branch into your master branch.
-- Add a very good description on what it is, make sure to include video showcasing. [Read & apply the best practices](https://medium.com/@hugooodias/the-anatomy-of-a-perfect-pull-request-567382bb6067).
-- Invite collaborators `demiculus` & `goktugyil` to the repo.
-- Request reviews for the PR from `demiculus` & `goktugyil`.
-
-## Notes
-
-- Make sure game has state functions like reset, start and pause. We should be able to trigger them with `app.reset()` or `app.pause()`.
-- Make sure players or ball uses app.width and app.height values dynamicly, hard coded values will be rejected.
-
-## Guidelines
-
-- Break down your commits into the smallest commit that represents a cohesive feature that is in a build-able state.
-- This is a good place to show off your architeture, clean code, modularity, extensibility knowledge.
