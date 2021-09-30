@@ -216,9 +216,11 @@
       function scored(ball) {
         if (ball.x <= 12 / 2) {
           playerTwoScore++;
+          console.log("PlayerTwo : " + playerTwoScore);
           app.reset();
         } else if (ball.x >= canvas.width - ball.width / 2) {
           playerOneScore++;
+          console.log("PlayerOne : " + playerOneScore);
           app.reset();
         }
       }

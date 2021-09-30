@@ -1,43 +1,38 @@
 # Talha's Colonist Test - Ping Pong Game
 
-Implement a ping pong game according to the template.
+Authors: `goktugyil` `TalhaKhamoor`
+Implemented a ping pong game according to the template provided.
 
-- You're not expected to know everything in here, but you're expected to figure them out.
+## Steps Completed Before Starting Project
 
-## Before Starting
+- Forked repository
+- Created a new branch and switched into it.
 
-- Fork repository
-- All work should be done in your own repository now.
-- Create a new branch and work on that branch.
-- Do not push commit or push anything to this repo (colonist/colonist-test)!
+## Starting Template
 
-## Template
+Template had `onInit` and `onUpdate` functions already created. I tried not to edit the app.js file too much as instructed, however, I ended up doing so inorder to allow some drawing functionality.
 
-Template has `onInit` and `onUpdate`. Please design your ping-pong game with only those two functions. Do not modify app.js.
+Initialization functions are in `onInit`, like key down and up bindings or players and ball.
 
-Put your initializing functions in `onInit`, like key down and up bindings or players and ball.
-
-You can use `this.nodes.push(nodeProperties)` to add nodes to canvas.
+`this.nodes.push(nodeProperties)` was provided to work with nodes in an array.
 You can also use `this.getNode()` to get node properties.
 
-You can find examples in index.html file in public folder.
+Most of app.js was provided aswell as the index.js file. Some working functionalities were illustrated in index.html script, but nothing to revealing.
 
-Please start server with `node index.js`.
+## Functionalities Completed
 
-## Todo
+- Made the game cover the whole browser
+- Added keyboard functionalities for both players, W and S for one player, Up and Down for another player.
+- Addded players into canvas, made sure we can move players with keyboard.
+- Added ball to the game, pressing `SPACE` button start's and pauses the game, made sure the ball bounces from boundries.
+- When a player scores, scoring is shown with console.log aswell as on canvas. Game is then reset.
 
-- Make the game cover the whole browser
-- Add keyboard functionalities for both players, W and S for one player, Up and Down for another player.
-- Add players into canvas, make sure we can move players with keyboard.
-- Add ball to the game, pressing `SPACE` button should start and pause game, make sure ball bounces from boundries.
-- When player scores, show scoring with console.log. And reset game.
+## Bonus Functionalities Completed
 
-## Bonus Todo
-
-- Add draw text functionality to the engine. You can modify app.js for that part.
-- Add score system for the game and use this drawText functionality on game.
-- Add resize function the engine. With window.resize
-- Make the ball round
+- Added draw text functionality to the engine. Introductory instructions and game title.
+- Added score system for the game and used the drawText functionality on game.
+- Added resize functionality
+- Made the ball round
 
 ## After Finishing
 
