@@ -7,6 +7,7 @@ const HEIGHT = window.innerHeight;
 const WALL_THICKNESS = 50;
 const BALL_RADIUS = 30;
 const PLAYER_SIZE = { width: 50, height: 300 };
+const PLAYER_INIT_VELOCITY = 20;
 const LOST_ZONE = 150;
 
 const { Engine, Render, Runner, Composite, Bodies, Body, Events } = Matter;
@@ -78,7 +79,7 @@ const placeLostZone = (world, x, y, zone = LOST_ZONE, width = WIDTH, height = HE
 };
 
 const placePlayer = (world, x, y, width = PLAYER_SIZE.width, height = PLAYER_SIZE.height) => {
-  const player = Bodies.rectangle(x, y, width, height, { density: 1 });
+  const player = Bodies.rectangle(x, y, width, height, { density: 1, frictionAir: 0.1 });
   Composite.add(world, [player]);
 
   return player;
@@ -146,25 +147,37 @@ const init = () => {
     const { key } = event;
     switch (key) {
       case "ArrowUp": {
-        const { x, y } = app.player2.position;
-        Body.applyForce(app.player2, { x, y }, { x: 0, y: -50 });
+        const { position, velocity } = app.player2;
+        const { x, y } = position;
+        if (Math.abs(velocity.y) < PLAYER_INIT_VELOCITY) {
+          Body.setVelocity(app.player2, { x: 0, y: -PLAYER_INIT_VELOCITY });
+        }
         break;
       }
       case "ArrowDown": {
-        const { x, y } = app.player2.position;
-        Body.applyForce(app.player2, { x, y }, { x: 0, y: 50 });
+        const { position, velocity } = app.player2;
+        const { x, y } = position;
+        if (Math.abs(velocity.y) < PLAYER_INIT_VELOCITY) {
+          Body.setVelocity(app.player2, { x: 0, y: PLAYER_INIT_VELOCITY });
+        }
         break;
       }
       case "w":
       case "W": {
-        const { x, y } = app.player1.position;
-        Body.applyForce(app.player1, { x, y }, { x: 0, y: -50 });
+        const { position, velocity } = app.player1;
+        const { x, y } = position;
+        if (Math.abs(velocity.y) < PLAYER_INIT_VELOCITY) {
+          Body.setVelocity(app.player1, { x: 0, y: -PLAYER_INIT_VELOCITY });
+        }
         break;
       }
       case "s":
       case "S": {
-        const { x, y } = app.player1.position;
-        Body.applyForce(app.player1, { x, y }, { x: 0, y: 50 });
+        const { position, velocity } = app.player1;
+        const { x, y } = position;
+        if (Math.abs(velocity.y) < PLAYER_INIT_VELOCITY) {
+          Body.setVelocity(app.player1, { x: 0, y: PLAYER_INIT_VELOCITY });
+        }
         break;
       }
     }
