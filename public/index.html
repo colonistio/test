@@ -32,7 +32,7 @@
     ></canvas>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript">
-      //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
+      //variables
       var speedOfPaddle1 = null;
       var speedOfPaddle2 = null;
       var xCoordDirection = null;
@@ -44,10 +44,12 @@
       var playerOneScore = 0;
       var playerTwoScore = -1;
 
+      // sets up our game and some evenlisteners when server is started
       app.onInit = function () {
+        // getting Canvas from app and its context
         this.canvas = document.getElementById("canvas");
         this.context = this.canvas.getContext("2d");
-
+        // adding player one to our nodes array
         this.nodes.push({
           id: "player-one",
           x: 10,
@@ -56,7 +58,7 @@
           height: canvas.height * 0.2,
           color: "white",
         });
-
+        // adding player two to our nodes array
         this.nodes.push({
           id: "player-two",
           x: canvas.width - (10 + canvas.width * 0.01),
@@ -65,7 +67,7 @@
           height: canvas.height * 0.2,
           color: "white",
         });
-
+        // adding ball to our nodes array
         this.nodes.push({
           id: "ball",
           x: canvas.width / 2,
@@ -75,7 +77,11 @@
           color: "white",
           direction: 0,
         });
-
+        /**
+         *  The rest of the nodes onwards would have been better off in a different array
+         *  but I wanted to keep the changes in app.js to a minimum as it was instructed too.
+         **/
+        // adding line to our array
         this.nodes.push({
           id: "line",
           x: canvas.width / 2 - 3.5,
@@ -84,7 +90,7 @@
           height: canvas.height,
           color: "white",
         });
-
+        // adding text to our array
         this.nodes.push({
           id: "text",
           value: "Talha Khamoor's PingPong",
@@ -92,7 +98,7 @@
           x: 30,
           y: 50,
         });
-
+        // adding text to our array
         this.nodes.push({
           id: "text",
           value:
@@ -102,14 +108,20 @@
           y: 80,
         });
 
+        // even listner for checking if a key is pressed down
         document.addEventListener("keydown", (e) => {
+          // if statements to figure out which key is pressed
+          // pause/unpause game
           if (e.keyCode == 32) {
             app.pause();
+            // splices off all the text nodes from our array
             this.nodes.splice(4, this.nodes.length);
           }
+          // reset game
           if (e.keyCode == 82) {
             app.reset();
           }
+          // control of player one and two paddles
           if (!isGamePaused) {
             if (e.keyCode == 87) {
               speedOfPaddle1 = -2;
@@ -123,7 +135,9 @@
           }
         });
 
+        // event listener to see if any keys were released
         document.addEventListener("keyup", (e) => {
+          // control of stopping player one and two paddles
           if (e.keyCode == 87) {
             speedOfPaddle1 = 0;
           } else if (e.keyCode == 83) {
@@ -134,23 +148,49 @@
             speedOfPaddle2 = 0;
           }
         });
-
-        isGamePaused = true;
       };
 
+      // runs everytime there is an update, so most of our logical functions are here
       app.onUpdate = function (time) {
-        // this.canvas = document.getElementById("canvas");
         var playerOne = this.getNode("player-one");
         var playerTwo = this.getNode("player-two");
         var ball = this.getNode("ball");
 
-        playerOne.y += speedOfPaddle1;
-        playerTwo.y += speedOfPaddle2;
+        // when paddlespeed on evenlistener increase's, this moves paddle
+        movePaddles(playerOne, playerTwo);
+        // when coordinates of ball on event listener change, this moves the ball
+        moveBall(ball);
+        // preventing paddle from going off canvas
+        lockInPadles(playerOne, playerTwo);
 
+        // preventing ball from leaving top and bottom, inversing the y direction
+        LockInBall(ball);
+
+        // figuring out which player has ball on their side
+        let player = ball.x < canvas.width / 2 ? playerOne : playerTwo;
+
+        // ball hitting sidewall, increasing score
+        scored(ball);
+
+        // preventing ball from going pass paddle, inversing x direction
+        if (isBallTouchingPaddle(player, ball, playerOne, playerTwo))
+          xCoordDirection = -xCoordDirection;
+      };
+
+      // moves ball
+      function moveBall(ball) {
         ball.x += xCoordDirection;
         ball.y += yCoordDirection;
+      }
 
-        // preventing paddle from going off canvas
+      // moves paddle based of incresed speeds
+      function movePaddles(playerOne, playerTwo) {
+        playerOne.y += speedOfPaddle1;
+        playerTwo.y += speedOfPaddle2;
+      }
+
+      // locks in paddle within canvas
+      function lockInPadles(playerOne, playerTwo) {
         if (playerOne.y <= 0) {
           playerOne.y = 0;
         }
@@ -163,14 +203,17 @@
         if (playerTwo.y >= canvas.height - playerTwo.height) {
           playerTwo.y = canvas.height - playerTwo.height;
         }
+      }
 
-        let player = ball.x < canvas.width / 2 ? playerOne : playerTwo;
-
-        //ball from leaving top and bottom
+      // locks in ball within canvas
+      function LockInBall(ball) {
         if (ball.y <= 12 / 2 || ball.y >= canvas.height - ball.width / 2) {
           yCoordDirection = -yCoordDirection;
         }
-        //ball hitting side
+      }
+
+      // increases score and initiates reset
+      function scored(ball) {
         if (ball.x <= 12 / 2) {
           playerTwoScore++;
           app.reset();
@@ -178,19 +221,16 @@
           playerOneScore++;
           app.reset();
         }
+      }
 
-        if (isBallTouchingPaddle(player, ball, playerOne, playerTwo)) {
-          xCoordDirection = -xCoordDirection;
-        }
-      };
-
+      // checks if ball is touching paddle
       isBallTouchingPaddle = (player, ball, playerOne, playerTwo) => {
-        //player 2
+        // turing operator to see if ball is within paddle y bounds
         var isBallHittingYCoordinates =
           player.y <= ball.y && ball.y <= player.y + player.height
             ? true
             : false;
-
+        // if else tree to make ball bounce of the right edge of paddle
         if (
           player.x == ball.x + ball.width / 2 &&
           player == playerTwo &&
@@ -210,7 +250,9 @@
         //           player.x + player.width == ball.x - ball.width / 2)
       };
 
+      // pauses game
       app.pause = function () {
+        // if ball is stopped game is paused
         if (xCoordDirection == 0) {
           xCoordDirection = xCoordDirection + savedXCoordDirection;
           yCoordDirection = yCoordDirection + savedYCoordDirection;
@@ -234,33 +276,32 @@
         }
       };
 
+      // resets game
       app.reset = function () {
         var playerOne = app.getNode("player-one");
         var playerTwo = app.getNode("player-two");
         var ball = app.getNode("ball");
-
+        // resetting ball
         ball.x = canvas.width / 2;
         ball.y = canvas.height / 2;
-
-        savedXCoordDirection = 2;
-        savedYCoordDirection = 2;
-
-        playerOne.y = canvas.height / 2 - (canvas.height * 0.2) / 2;
-        playerTwo.y = canvas.height / 2 - (canvas.height * 0.2) / 2;
-
-        if (Math.random() < 0.5) {
-          xCoordDirection = -2;
-        } else {
-          xCoordDirection = +2;
-        }
-        if (Math.random() < 0.5) {
-          yCoordDirection = -2;
-        } else {
-          yCoordDirection = +2;
-        }
-
+        // restting paddles
+        playerOne.y = playerTwo.y =
+          canvas.height / 2 - (canvas.height * 0.2) / 2;
+        //restting ball direction
+        xCoordDirection = randomiseKickOff(xCoordDirection);
+        yCoordDirection = randomiseKickOff(yCoordDirection);
+        // pauses game to be started with space again
         app.pause();
       };
+
+      // refactored - randomize which direction the ball will take off
+      function randomiseKickOff(coordinates) {
+        if (Math.random() < 0.5) {
+          return (coordinates = -2);
+        } else {
+          return (coordinates = +2);
+        }
+      }
     </script>
   </body>
 </html>
