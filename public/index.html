@@ -33,13 +33,16 @@
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript">
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
-      var speedOfPaddle1 = 0;
-      var speedOfPaddle2 = 0;
-      var xCoordDirection = 0;
-      var yCoordDirection = 0;
-      var isGamePaused = false;
-      var savedXCoordDirection = 0;
-      var savedYCoordDirection = 0;
+      var speedOfPaddle1 = null;
+      var speedOfPaddle2 = null;
+      var xCoordDirection = null;
+      var yCoordDirection = null;
+      var isGamePaused = true;
+      var isGameStarted = false;
+      var savedXCoordDirection = 2;
+      var savedYCoordDirection = 2;
+      var playerOneScore = 0;
+      var playerTwoScore = -1;
 
       app.onInit = function () {
         this.canvas = document.getElementById("canvas");
@@ -70,7 +73,6 @@
           width: this.getNode("player-one").width,
           height: this.getNode("player-one").width,
           color: "white",
-          ballSpeed: 3,
           direction: 0,
         });
 
@@ -83,9 +85,30 @@
           color: "white",
         });
 
+        this.nodes.push({
+          id: "text",
+          value: "Talha Khamoor's PingPong",
+          sizeAndFont: "25px Arial",
+          x: 30,
+          y: 50,
+        });
+
+        this.nodes.push({
+          id: "text",
+          value:
+            " - [Space] to start/Pause/Unpause game , - [r] to restart , - [w] [s] player 1 keys , - [up arrow] [down arrow] player 2 keys",
+          sizeAndFont: "15px Arial",
+          x: 50,
+          y: 80,
+        });
+
         document.addEventListener("keydown", (e) => {
           if (e.keyCode == 32) {
             app.pause();
+            this.nodes.splice(4, this.nodes.length);
+          }
+          if (e.keyCode == 82) {
+            app.reset();
           }
           if (!isGamePaused) {
             if (e.keyCode == 87) {
@@ -112,35 +135,14 @@
           }
         });
 
-        if (Math.random() < 0.5) {
-          var xdirection = (this.getNode("ball").direction = -1);
-        } else {
-          var xdirection = (this.getNode("ball").direction = +1);
-        }
-        if (Math.random() < 0.5) {
-          var ydirection = (this.getNode("ball").direction = -1);
-        } else {
-          var ydirection = (this.getNode("ball").direction = +1);
-        }
-        xCoordDirection = ydirection * 2;
-        yCoordDirection = xdirection * 2;
+        isGamePaused = true;
       };
-
-      //   function startBall() {
-      //     if (Math.random() < 0.5) {
-      //       var side = 1;
-      //     } else {
-      //       var side = -1;
-      //     }
-      //     ballDirection = side * (Math.random() * 6 + 5);
-      //     ballSpeed = Math.random() * 6 + 5;
-      //   }
 
       app.onUpdate = function (time) {
         // this.canvas = document.getElementById("canvas");
-        var playerOne = app.getNode("player-one");
-        var playerTwo = app.getNode("player-two");
-        var ball = app.getNode("ball");
+        var playerOne = this.getNode("player-one");
+        var playerTwo = this.getNode("player-two");
+        var ball = this.getNode("ball");
 
         playerOne.y += speedOfPaddle1;
         playerTwo.y += speedOfPaddle2;
@@ -167,6 +169,14 @@
         //ball from leaving top and bottom
         if (ball.y <= 12 / 2 || ball.y >= canvas.height - ball.width / 2) {
           yCoordDirection = -yCoordDirection;
+        }
+        //ball hitting side
+        if (ball.x <= 12 / 2) {
+          playerTwoScore++;
+          app.reset();
+        } else if (ball.x >= canvas.width - ball.width / 2) {
+          playerOneScore++;
+          app.reset();
         }
 
         if (isBallTouchingPaddle(player, ball, playerOne, playerTwo)) {
@@ -202,19 +212,55 @@
 
       app.pause = function () {
         if (xCoordDirection == 0) {
+          xCoordDirection = xCoordDirection + savedXCoordDirection;
+          yCoordDirection = yCoordDirection + savedYCoordDirection;
           isGamePaused = false;
-          xCoordDirection = savedXCoordDirection;
-          yCoordDirection = savedYCoordDirection;
         } else {
           savedXCoordDirection = xCoordDirection;
           savedYCoordDirection = yCoordDirection;
           xCoordDirection = 0;
           yCoordDirection = 0;
+          if (!isGamePaused) {
+            this.nodes.push({
+              id: "text",
+              value:
+                playerOneScore.toString() + " : " + playerTwoScore.toString(),
+              sizeAndFont: "50px Arial",
+              x: 600,
+              y: 300,
+            });
+          }
           isGamePaused = true;
         }
       };
 
-      app.reset = function () {};
+      app.reset = function () {
+        var playerOne = app.getNode("player-one");
+        var playerTwo = app.getNode("player-two");
+        var ball = app.getNode("ball");
+
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+
+        savedXCoordDirection = 2;
+        savedYCoordDirection = 2;
+
+        playerOne.y = canvas.height / 2 - (canvas.height * 0.2) / 2;
+        playerTwo.y = canvas.height / 2 - (canvas.height * 0.2) / 2;
+
+        if (Math.random() < 0.5) {
+          xCoordDirection = -2;
+        } else {
+          xCoordDirection = +2;
+        }
+        if (Math.random() < 0.5) {
+          yCoordDirection = -2;
+        } else {
+          yCoordDirection = +2;
+        }
+
+        app.pause();
+      };
     </script>
   </body>
 </html>

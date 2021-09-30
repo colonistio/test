@@ -43,6 +43,16 @@ var app = {
         this.context.beginPath();
         this.context.arc(node.x, node.y, node.width, 0, Math.PI * 2);
         this.context.fill();
+      } else if (node.id == "text") {
+        this.context.font = node.sizeAndFont;
+        var y = node.y;
+        var lineHeight = 30;
+        var lines = node.value.split(",");
+
+        for (var i = 0; i < lines.length; i++) {
+          this.context.fillText(lines[i], node.x, y);
+          y += lineHeight;
+        }
       } else {
         this.context.fillStyle = node.color;
         this.context.fillRect(node.x, node.y, node.width, node.height);
