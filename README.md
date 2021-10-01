@@ -1,49 +1,36 @@
-# Colonist Test Game
-Implement a ping pong game according to the template. 
+# Ping Pong Game
+This game is to demonstrate how to build a simple Ping Pong game through [Matter.js](https://brm.io/matter-js/), a physics engine.
 
-- You're not expected to know everything in here, but you're expected to figure them out. 
+The game is available on the Github page: [link](https://shawtim.github.io/ping-pong-game/).![image](https://user-images.githubusercontent.com/85455/135694451-2e44b80a-e4ad-46b4-b354-16e3f4ff4010.png)
 
-## Before Starting
-- Fork repository
-- All work should be done in your own repository now.
-- Create a new branch and work on that branch.
-- Do not push commit or push anything to this repo (colonist/colonist-test)!
+## How to play
+- `W` and `S` for Red Player to move
+- `↑` and `↓` for Blue Player to move
+- `SPACE` to start/pause/resume the game
 
-## Template
-Template has `onInit` and `onUpdate`. Please design your ping-pong game with only those two functions. Do not modify app.js.
+## Game Physics
+In Ping Pong game we can expect there will be plenties of collisions between the ball and the walls/players. In real world the ball won't be simply bounced back because of a lot of physics factors, like the force/mass/momentum/angular momentum. To simulate the reality we can apply a physics engine to do the job.
 
-Put your initializing functions in `onInit`, like key down and up bindings or players and ball.
+### Gravity
+We don't have gravity for this game. Most physics engine comes with default gravity so we set it to zero first.
 
-You can use ```this.nodes.push(nodeProperties)``` to add nodes to canvas.
-You can also use ```this.getNode()``` to get node properties.
+### Friction
+That can mean air friction and frictions of the objects.
 
-You can find examples in index.html file in public folder.
+Air friction means a resistance force that can slow down object, which probably we don't want to see it applied on the ball (air friction applies on the player objects, though), so we better set it to zero. 
 
-Please start server with ```node index.js```.
+When the ball collides with another object with friction, since the friction force is a vector the ball may spin. This is actually an advanced technique on real world Ping Pong game. Feel free to add friction to the objects if we want to have more fun on this game.
 
-## Todo
-- Make the game cover the whole browser
-- Add keyboard functionalities for both players, W and S for one player, Up and Down for another player.
-- Add players into canvas, make sure we can move players with keyboard.
-- Add ball to the game, pressing ```SPACE``` button should start and pause game, make sure ball bounces from boundries.
-- When player scores, show scoring with console.log. And reset game.
+### Elasticity
+Elasticity is important for collision. Inelastic collision can cause engery loss which will slow down the ball for every collision. We may want to make sure the collision is elastic.
 
-## Bonus Todo
-- Add draw text functionality to the engine. You can modify app.js for that part.
-- Add score system for the game and use this drawText functionality on game.
-- Add resize function the engine. With window.resize
-- Make the ball round
+### Mass/Density
+This is about the momentum changes after the collision. The relative mass of the ball needs to be sufficiently small such that it can be bounced with ~100% linear speed.
 
-## After Finishing
-- On your repository create a PR merging your feature branch into your master branch.
-- Add a very good description on what it is, make sure to include video showcasing. [Read & apply the best practices](https://medium.com/@hugooodias/the-anatomy-of-a-perfect-pull-request-567382bb6067).
-- Invite collaborators `demiculus` & `goktugyil` to the repo.
-- Request reviews for the PR from `demiculus` & `goktugyil`.
+### Movement of the Players
+Make sure the players are always on track. Players only move alone the vertical tracks. So besides setting a relatively high mass for the player objects, we need to cancel the horizontal movements of the player objects by setting the horizontal position and cancel horizontal velocity on every frame.
 
-## Notes
-- Make sure game has state functions like reset, start and pause. We should be able to trigger them with ```app.reset()``` or ```app.pause()```.
-- Make sure players or ball uses app.width and app.height values dynamicly, hard coded values will be rejected.
+The players are supposingly moved by the force applied, which means the velocity will keep growing from zero. By experiments this may not be the experiences that users want (although it's real). We need to fine tune the interaction of player movement on it.
 
-## Guidelines
-- Break down your commits into the smallest commit that represents a cohesive feature that is in a build-able state.
-- This is a good place to show off your architeture, clean code, modularity, extensibility knowledge.
+## Other Physics examples
+You may visit [my project](https://shawtim.github.io/itdog-slaughterhouse/) which is also built by Matter.js.
