@@ -8,10 +8,27 @@ const WALL_THICKNESS = 50;
 const BALL_RADIUS = 30;
 const PLAYER_SIZE = { width: 50, height: 300 };
 const PLAYER_INIT_VELOCITY = 20;
+const PLAYER1_COLOR = "red";
+const PLAYER2_COLOR = "blue";
 const LOST_ZONE = 150;
+const SCORE_FONT = "300px Arial";
+const SCORE_COLOR = "rgba(0, 0, 0, 0.2)";
+const NEXT_GAME_TEXT = "Press \"SPACE\" for next game!";
+const NEXT_GAME_COLOR = "rgba(0, 0, 0, 0.4)";
+const NEXT_GAME_FONT = "48px Arial";
+const INTRO_TEXT1 = "Player 1: WS to move";
+const INTRO_TEXT2 = "Player 2: ↑↓ to move";
+const INTRO_TEXT3 = "Press \"SPACE\" to start";
+const INTRO_COLOR = "rgba(0, 0, 0, 0.4)";
+const INTRO_FONT = "48px Arial";
 
-const { Engine, Render, Runner, Composite, Bodies, Body, Events } = Matter;
+const { Engine, Render, Runner, Composites, Composite, Bodies, Body, Events } = Matter;
 const app = {
+  node: document.body,
+  engine: null,
+  world: null,
+  render: null,
+  runner: null,
   walls: null,
   ball: null,
   lostZone1: null,
@@ -22,24 +39,12 @@ const app = {
   score2: 0,
 };
 
-const placeWall = (x, y, width, height, thickness) => {
-  const option = { isStatic: true, mass: 100, render: { sprite: { texture: "wall.png" }}};
-  const parts = [];
-  for (let i=0; i<width; i+=thickness) {
-    for (let j=0; j<height; j+=thickness) {
-      parts.push(Bodies.rectangle(x+i+thickness/2, y+j+thickness/2, thickness, thickness, option));
-    }
-  }
-  return Bodies.rectangle(x+width/2, y+height/2, width, height, {
-    isStatic: true,
-    parts,
-  });
-};
-
 const placeWalls = (world, width = WIDTH, height = HEIGHT, thickness = WALL_THICKNESS) => {
+  const options = { isStatic: true, render: { sprite: { texture: "wall.png" }}};
+  const warningWall = (x, y) => Bodies.rectangle(x, y, thickness, thickness, options);
   const walls = [
-    placeWall(0, 0, thickness, height, thickness),
-    placeWall(width-thickness, 0, thickness, height, thickness),
+    Composites.stack(0, 0, 1, height/thickness, 0, 0, warningWall),
+    Composites.stack(width-thickness, 0, 1, height/thickness, 0, 0, warningWall),
     Bodies.rectangle(width/2, thickness/2, width, thickness, { isStatic: true }),
     Bodies.rectangle(width/2, height-thickness/2, width, thickness, { isStatic: true }),
   ];
@@ -71,58 +76,90 @@ const placeBall = (world, x = WIDTH/2, y = HEIGHT/2, radius = BALL_RADIUS) => {
 };
 
 const placeLostZone = (world, x, y, zone = LOST_ZONE, width = WIDTH, height = HEIGHT) => {
-  const option = { isStatic: true, isSensor: true, render: { fillStyle: "transparent" }};
-  const lostZone = Bodies.rectangle(x+zone/2, y+height/2, zone, height, option);
+  const options = { isStatic: true, isSensor: true, render: { fillStyle: "transparent" }};
+  const lostZone = Bodies.rectangle(x+zone/2, y+height/2, zone, height, options);
   Composite.add(world, [lostZone]);
 
   return lostZone;
 };
 
-const placePlayer = (world, x, y, width = PLAYER_SIZE.width, height = PLAYER_SIZE.height) => {
-  const player = Bodies.rectangle(x, y, width, height, { density: 1, frictionAir: 0.1 });
+const placePlayer = (world, color, x, y, width = PLAYER_SIZE.width, height = PLAYER_SIZE.height) => {
+  const player = Bodies.rectangle(x, y, width, height, { density: 1, frictionAir: 0.1, render: { fillStyle: color }});
   Composite.add(world, [player]);
 
   return player;
 };
 
-const init = () => {
-  const engine = Engine.create({
+const displayText = (context, text, x, y, options) => {
+  const {
+    textAlign = "center",
+    textBaseline = "middle",
+    fillStyle,
+    font
+  } = options;
+  context.textAlign = textAlign;
+  context.textBaseline = textBaseline;
+  context.fillStyle = fillStyle || context.fillStyle;
+  context.font = font || context.font;
+  context.fillText(text, x, y);
+};
+
+const displayScores = (context, score1, x1, y1, score2, x2, y2) => {
+  displayText(context, score1, x1, y1, { fillStyle: SCORE_COLOR, font: SCORE_FONT });
+  displayText(context, score2, x2, y2, { fillStyle: SCORE_COLOR, font: SCORE_FONT });
+  displayText(context, ":", (x1+x2)/2, (y1+y2)/2, { fillStyle: SCORE_COLOR, font: SCORE_FONT });
+};
+
+const handleLose = (app) => {
+  setTimeout(() => {
+    Runner.stop(app.runner);
+    Render.stop(app.render);
+    displayText(app.render.context, NEXT_GAME_TEXT, WIDTH/2, HEIGHT*3/4, { fillStyle: NEXT_GAME_COLOR, font: NEXT_GAME_FONT });
+  }, 100);
+  app.node.onkeydown = (event) => event.key === " " && start(app);
+};
+
+const start = (app) => {
+  app.node.innerHTML = "";
+
+  app.engine = Engine.create({
     gravity: { scale: 0, x: 0, y: 0 },
   });
-  const world = engine.world;
+  app.world = app.engine.world;
 
-  const render = Render.create({
-    element: document.body,
-    engine: engine,
+  app.render = Render.create({
+    element: app.node,
+    engine: app.engine,
     options: {
       width: WIDTH,
       height: HEIGHT,
-      background: "white",
+      background: "transparent",
       wireframes: false,
     }
   });
-  Render.run(render);
+  Render.run(app.render);
 
-  const runner = Runner.create();
-  Runner.run(runner, engine);
+  app.runner = Runner.create();
+  Runner.run(app.runner, app.engine);
+  
+  app.lostZone1 = placeLostZone(app.world, 0, 0);
+  app.lostZone2 = placeLostZone(app.world, WIDTH-LOST_ZONE, 0);
+  app.walls = placeWalls(app.world);
+  app.ball = placeBall(app.world);
+  app.player1 = placePlayer(app.world, PLAYER1_COLOR, WALL_THICKNESS+LOST_ZONE+PLAYER_SIZE.width/2, HEIGHT/2);
+  app.player2 = placePlayer(app.world, PLAYER2_COLOR, WIDTH-WALL_THICKNESS-LOST_ZONE-PLAYER_SIZE.width/2, HEIGHT/2);
 
-  app.lostZone1 = placeLostZone(world, 0, 0);
-  app.lostZone2 = placeLostZone(world, WIDTH-LOST_ZONE, 0);
-  app.walls = placeWalls(world);
-  app.ball = placeBall(world);
-  app.player1 = placePlayer(world, WALL_THICKNESS+LOST_ZONE+PLAYER_SIZE.width/2, HEIGHT/2);
-  app.player2 = placePlayer(world, WIDTH-WALL_THICKNESS-LOST_ZONE-PLAYER_SIZE.width/2, HEIGHT/2);
-
-  Events.on(engine, "beforeUpdate", (event) => {
+  Events.on(app.engine, "beforeUpdate", (event) => {
     Body.setPosition(app.player1, { x: WALL_THICKNESS+LOST_ZONE+PLAYER_SIZE.width/2, y: app.player1.position.y });
     Body.setPosition(app.player2, { x: WIDTH-WALL_THICKNESS-LOST_ZONE-PLAYER_SIZE.width/2, y: app.player2.position.y });
     Body.setAngularVelocity(app.player1, 0);
     Body.setAngularVelocity(app.player2, 0);
     Body.setVelocity(app.player1, { x: 0, y: app.player1.velocity.y });
     Body.setVelocity(app.player2, { x: 0, y: app.player2.velocity.y });
+    displayScores(app.render.context, app.score1, WIDTH/4+LOST_ZONE, HEIGHT/2, app.score2, WIDTH*3/4-LOST_ZONE, HEIGHT/2);
   });
 
-  Events.on(engine, "collisionStart", (event) => {
+  Events.on(app.engine, "collisionStart", (event) => {
     const { pairs } = event;
     pairs.forEach((pair) => {
       if (pair.collision.collided) {
@@ -131,19 +168,21 @@ const init = () => {
           // collide with ball
           if ([bodyA, bodyB].some((body) => body.id === app.lostZone1.id)) {
             // ball enters lost zone
-            Runner.stop(runner);
+            app.score2++;
+            handleLose(app);
           } else if ([bodyA, bodyB].some((body) => body.id === app.lostZone2.id)) {
             // ball enters lost zone
-            Runner.stop(runner);
+            app.score1++;
+            handleLose(app);
           }
         }
       }
     });
   });
 
-  document.body.focus();
-  document.body.onblur = (event) => document.body.focus();
-  document.body.onkeydown = (event) => {
+  app.node.focus();
+  app.node.onblur = (event) => app.node.focus();
+  app.node.onkeydown = (event) => {
     const { key } = event;
     switch (key) {
       case "ArrowUp": {
@@ -184,6 +223,21 @@ const init = () => {
   };
 };
 
+const init = (app) => {
+  const canvas = document.createElement("canvas");
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
+  const context = canvas.getContext("2d");
+  app.node.appendChild(canvas);
+  const textOptions = { fillStyle: INTRO_COLOR, font: INTRO_FONT };
+  displayText(context, INTRO_TEXT1, WIDTH/2, HEIGHT/4, textOptions);
+  displayText(context, INTRO_TEXT2, WIDTH/2, HEIGHT/2, textOptions);
+  displayText(context, INTRO_TEXT3, WIDTH/2, HEIGHT*3/4, textOptions);
+  app.node.focus();
+  app.node.onblur = (event) => app.node.focus();
+  app.node.onkeydown = (event) => event.key === " " && start(app);
+};
+
 document.addEventListener("DOMContentLoaded", (e) => {
-  init();
+  init(app);
 });
