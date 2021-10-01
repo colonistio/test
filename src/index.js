@@ -39,6 +39,7 @@ const app = {
   score1: 0,
   score2: 0,
   isPaused: false,
+  hasLost: false,
   lastBallVelocity: null,
 };
 
@@ -63,6 +64,7 @@ const displayScores = (context, score1, x1, y1, score2, x2, y2) => {
 };
 
 const handleLose = (app) => {
+  app.hasLost = true;
   setTimeout(() => {
     Runner.stop(app.runner);
     Render.stop(app.render);
@@ -94,6 +96,7 @@ const start = (app) => {
   app.runner = Runner.create();
   Runner.run(app.runner, app.engine);
   
+  app.hasLost = false;
   app.loseZone1 = placeLoseZone(app.world, 0, 0, LOSE_ZONE, WIDTH, HEIGHT);
   app.loseZone2 = placeLoseZone(app.world, WIDTH-LOSE_ZONE, 0, LOSE_ZONE, WIDTH, HEIGHT);
   app.walls = placeWalls(app.world, WIDTH, HEIGHT, WALL_THICKNESS);
@@ -123,7 +126,9 @@ const start = (app) => {
     Body.setVelocity(app.player1, { x: 0, y: app.player1.velocity.y });
     Body.setVelocity(app.player2, { x: 0, y: app.player2.velocity.y });
     displayScores(app.render.context, app.score1, WIDTH/4+LOSE_ZONE, HEIGHT/2, app.score2, WIDTH*3/4-LOSE_ZONE, HEIGHT/2);
-    displayText(app.render.context, app.isPaused ? RESUME_GAME_TEXT : PAUSE_GAME_TEXT, WIDTH/2, HEIGHT*3/4);
+    if (!app.hasLost) {
+      displayText(app.render.context, app.isPaused ? RESUME_GAME_TEXT : PAUSE_GAME_TEXT, WIDTH/2, HEIGHT*3/4);
+    }
   });
 
   Events.on(app.engine, "collisionStart", (event) => {
