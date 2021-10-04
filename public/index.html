@@ -11,8 +11,10 @@
       style="border: 1px solid #d3d3d3"
     ></canvas>
     <script type="text/javascript" src="js/app.js"></script>
-    <script type="text/javascript">
+    <script type="module" type="text/javascript">
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
+
+      import { PlayersLogic } from "./js/player.js";
 
       app.onInit = function () {
         const app = this;
@@ -83,54 +85,6 @@
           x: 10,
           y: app.height - 20,
         });
-
-        //======================================================================================================================================================
-        // Keycode for W:87, S:83
-        // Keycode for arrow up: 38, down: 40
-        //======================================================================================================================================================
-        // Event listener for keydown.
-        document.addEventListener("keydown", function (e) {
-          // this returns the document so we need to save variables for access.
-          switch (e.which) {
-            case 83:
-              app.getNode("racketOne").direction = -1;
-              break;
-            case 87:
-              app.getNode("racketOne").direction = 1;
-              break;
-            case 38:
-              app.getNode("racketTwo").direction = 1;
-              break;
-            case 40:
-              app.getNode("racketTwo").direction = -1;
-              break;
-            case 32:
-              app.pause();
-              break;
-            default:
-              break;
-          }
-        });
-
-        // Event listener for keyup.
-        document.addEventListener("keyup", function (e) {
-          switch (e.which) {
-            case 83:
-              app.getNode("racketOne").direction = 0;
-              break;
-            case 87:
-              app.getNode("racketOne").direction = 0;
-              break;
-            case 38:
-              app.getNode("racketTwo").direction = 0;
-              break;
-            case 40:
-              app.getNode("racketTwo").direction = 0;
-              break;
-            default:
-              break;
-          }
-        });
       };
 
       app.onUpdate = function (time) {
@@ -140,93 +94,6 @@
         let ball = this.getNode("ball"); // Cache the ball.
         let gameState = this.getNode("gameState");
         let scoreText = this.getNode("score");
-
-        // Check if player is out of canvas bounds.
-        function CheckBoundsPlayer(player) {
-          if (player == undefined) {
-            console.log("CheckBoundsPlayer: Player is undefined");
-            return;
-          }
-
-          if (player.y < 0) {
-            player.y = 0;
-          } else if (player.y + player.height > app.height) {
-            player.y = app.height - player.height;
-          }
-        }
-
-        // Gets the collision between two objects.
-        function Collides(obj1, obj2) {
-          // if any of the objects is undefined return.
-          if (obj1 == undefined) {
-            console.log("Collides: First argument is undefined!");
-            return;
-          }
-
-          if (obj2 == undefined) {
-            console.log("Collides: Second argument is undefined!");
-            return;
-          }
-
-          return (
-            obj1.x < obj2.x + obj2.width &&
-            obj1.x + obj1.width > obj2.x &&
-            obj1.y < obj2.y + obj2.height &&
-            obj1.y + obj1.height > obj2.y
-          );
-        }
-
-        // Check if ball is out of canvas bounds.
-        function CheckBallBounds() {
-          if (ball == undefined) {
-            console.log("CheckBallBounds: ball is undefined");
-            return;
-          }
-
-          let angle = Math.atan(ball.directionY / ball.directionX); // Get the angle in the direction of the ball.
-          if (ball.y < 0) {
-            // if ball.y less than zero. (upper bounds).
-            ball.directionY = Math.tan(-angle) * ball.directionX; // then ball y direction is calculated (direction x stays the same).
-          } else if (ball.y + ball.height > app.height) {
-            // else if ball.y + ball.height greater than canvas height. (lower bounds).
-            ball.directionY = Math.tan(-angle) * ball.directionX; // then ball y direction is calculated (direction x stays the same).
-          } else if (ball.x + ball.width > app.width) {
-            // else if ball hit the right wall.
-            gameState.playerOneScore += 1; // Player One scored.
-            // console.log(gameState.playerOneScore);
-            RestGame(); // Reset game.
-          } else if (ball.x + ball.width < 0) {
-            // else ball hit left wall.
-            gameState.playerTwoScore += 1; // Player Two scored.
-            // console.log(gameState.playerTwoScore); // Reset game.
-            RestGame(); // Reset game.
-          }
-        }
-
-        // Check if ball hit a racket or not.
-        function BallHitRacket() {
-          if (ball == undefined) {
-            console.log("BallHitRacket: ball is undefined");
-            return;
-          }
-
-          let angle = Math.atan(ball.directionY / ball.directionX); // find the angle which ball hit the racket in.
-          if (Collides(ball, playerOne)) {
-            // if ball hit player one racket.
-            ball.directionY = Math.tan(angle) * ball.directionX; // and set the ball y-direction to be the opposite departure angle.
-            ball.directionX = -ball.directionX; // and set the ball x-direction to the opposite direction.
-            if (ball.speed < gameState.maxBallSpeed) {
-              ball.speed += 0.2;
-            }
-          } else if (Collides(ball, playerTwo)) {
-            // else ball hit player two racket.
-            ball.directionY = Math.tan(angle) * ball.directionX; // and set the ball y-direction to be the opposite departure angle.
-            ball.directionX = -ball.directionX; // and set the ball x-direction to the opposite direction.
-            if (ball.speed < gameState.maxBallSpeed) {
-              ball.speed += 0.2;
-            }
-          }
-        }
 
         function RestGame() {
           if (
@@ -306,20 +173,9 @@
           if (gameState.paused || gameState.reset || gameState.end) {
             return;
           }
-
-          playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
-          playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
-
-          ball.x += ball.directionX * ball.speed; // Move ball horizontally based on direction and speed.
-          ball.y += ball.directionY * ball.speed; // Move ball vertically based on direction and speed.
         }
 
-        CheckBoundsPlayer(playerOne);
-        CheckBoundsPlayer(playerTwo);
-        CheckBallBounds();
-        BallHitRacket();
-        Continue();
-        GameWon();
+        PlayersLogic(playerOne, playerTwo);
       };
     </script>
   </body>
