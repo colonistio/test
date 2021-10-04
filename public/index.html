@@ -14,9 +14,7 @@
     <script type="module" type="text/javascript">
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
-      import { PlayersLogic } from "./js/player.js";
-      import { BallLogic, BallAngle } from "./js/ball.js";
-      import { BallRacketBounce } from "./js/collision.js";
+      import { gameLogic } from "./js/game.js";
 
       app.onInit = function () {
         const app = this;
@@ -43,6 +41,7 @@
           color: "black",
           direction: 0,
           speed: 4,
+          score: 0,
         });
 
         this.nodes.push({
@@ -54,6 +53,7 @@
           color: "black",
           direction: 0,
           speed: 4,
+          score: 0,
         });
 
         this.nodes.push({
@@ -72,12 +72,9 @@
         this.nodes.push({
           id: "gameState",
           defaultBallSpeed: 3,
-          playerOneScore: 0,
-          playerTwoScore: 0,
           maxScore: 3,
           paused: true,
           end: false,
-          reset: false,
           maxBallSpeed: 9,
         });
 
@@ -96,37 +93,6 @@
         let ball = this.getNode("ball"); // Cache the ball.
         let gameState = this.getNode("gameState");
         let scoreText = this.getNode("score");
-
-        function RestGame() {
-          if (
-            gameState == undefined ||
-            playerOne == undefined ||
-            playerTwo == undefined ||
-            ball == undefined ||
-            scoreText == undefined
-          ) {
-            console.log("RestGame: Undefined variable detected!");
-            return;
-          }
-
-          gameState.reset = true;
-
-          // Reset players position.
-          playerOne.y = app.height / 2;
-          playerTwo.y = app.height / 2;
-
-          // Reset ball position.
-          ball.speed = 0;
-          ball.x = app.width / 2;
-          ball.y = app.height / 2;
-
-          ball.directionX = RandomBallXDirection();
-          ball.directionY = RandomBallYDirection();
-          ball.speed = gameState.defaultBallSpeed;
-
-          scoreText.text =
-            gameState.playerOneScore + " - " + gameState.playerTwoScore;
-        }
 
         function GameWon() {
           if (gameState == undefined) {
@@ -161,27 +127,7 @@
           return Math.random(1) + 0.2;
         }
 
-        function Continue() {
-          if (gameState == undefined) {
-            console.log("Continue: Game state is undefined");
-            return;
-          }
-
-          if (playerOne == undefined || playerTwo == undefined) {
-            console.log("Continue: Player is undefined.");
-            return;
-          }
-
-          // if game is paused or is resetting or endded don't move anything.
-          if (gameState.paused || gameState.reset || gameState.end) {
-            return;
-          }
-        }
-
-        let angle = BallAngle(ball);
-        PlayersLogic(playerOne, playerTwo);
-        BallLogic(ball, angle);
-        BallRacketBounce(ball, angle, playerOne, playerTwo);
+        gameLogic(ball, playerOne, playerTwo, gameState, scoreText);
       };
     </script>
   </body>

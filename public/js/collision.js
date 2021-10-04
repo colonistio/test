@@ -20,7 +20,7 @@ function BallHitRacket(ball, player) {
     );
 }
 
-function BallRacketBounce(ball, angle, playerOne, playerTwo) {
+function collision(ball, angle, playerOne, playerTwo) {
     if (BallHitRacket(ball, playerOne) || BallHitRacket(ball, playerTwo)) {
         ChangeBallDirection(ball);
         IncreaseBallSpeedPerHit(ball);
@@ -28,4 +28,4 @@ function BallRacketBounce(ball, angle, playerOne, playerTwo) {
     }
 }
 
-export { BallRacketBounce }
+export { collision }

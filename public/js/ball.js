@@ -35,7 +35,6 @@ function BallLogic(ball, angle) {
     ball.x += ball.directionX * ball.speed; // Move ball horizontally based on direction and speed.
     ball.y += ball.directionY * ball.speed; // Move ball vertically based on direction and speed.
     if (BallHitCanvas(ball)) { BallBounce(ball, angle); }
-    return BallHitNet(ball);
 }
 
-export { BallLogic, BallAngle, BallBounce, ChangeBallDirection, IncreaseBallSpeedPerHit }
+export { BallLogic, BallHitNet, BallAngle, BallBounce, ChangeBallDirection, IncreaseBallSpeedPerHit }

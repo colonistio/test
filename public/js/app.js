@@ -71,12 +71,11 @@ var app = {
 		var gameState = this.getNode('gameState');
 		if (gameState == undefined) { return; }
 
-		gameState.playerTwoScore = 0;
-		gameState.playerOneScore = 0;
+		this.getNode('racketOne').score = 0;
+		this.getNode('racketTwo').score = 0;
 
 		gameState.paused = false;
 		gameState.end = false;
-		gameState.reset = false;
 
 		this.getNode('score').x = this.getNode('score').x;
 		this.getNode('score').text = '0 - 0';
@@ -88,7 +87,6 @@ var app = {
 		if (gameState.end) {
 			app.reset();
 		} else if (gameState.reset) {
-			gameState.reset = false;
 			gameState.paused = false;
 		} else {
 			gameState.paused = !gameState.paused;

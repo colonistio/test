@@ -1,6 +1,6 @@
 // Contains player movement/logic
 
-function DetectPlayerKeysDown(playerOne, playerTwo) {
+function detectPlayerKeysDown(playerOne, playerTwo) {
     document.addEventListener("keydown", function (e) {
         switch (e.which) {
             case 83:
@@ -24,7 +24,7 @@ function DetectPlayerKeysDown(playerOne, playerTwo) {
     });
 }
 
-function DetectPlayerKeysUp(playerOne, playerTwo) {
+function detectPlayerKeysUp(playerOne, playerTwo) {
     document.addEventListener("keyup", function (e) {
         switch (e.which) {
             case 83:
@@ -45,7 +45,7 @@ function DetectPlayerKeysUp(playerOne, playerTwo) {
     });
 }
 
-function PlayerToCanvasBounds(player) {
+function playerToCanvasBounds(player) {
     if (player == undefined) {
         console.log("CheckBoundsPlayer: Player is undefined");
         return;
@@ -57,18 +57,18 @@ function PlayerToCanvasBounds(player) {
     }
 }
 
-function PlayersLogic(playerOne, playerTwo) {
+function resetPlayerPosition(player) { player.y = app.height / 2; }
+
+function playersLogic(playerOne, playerTwo) {
 
     playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
-    playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerRwo vertically based on the direction * speed.
+    playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerTwo vertically based on the direction * speed.
 
-    DetectPlayerKeysDown(playerOne, playerTwo);
-    DetectPlayerKeysUp(playerOne, playerTwo);
+    detectPlayerKeysDown(playerOne, playerTwo);
+    detectPlayerKeysUp(playerOne, playerTwo);
 
-    PlayerToCanvasBounds(playerOne);
-    PlayerToCanvasBounds(playerTwo);
+    playerToCanvasBounds(playerOne);
+    playerToCanvasBounds(playerTwo);
 }
 
-
-
-export { PlayersLogic };
+export { playersLogic, resetPlayerPosition };
