@@ -1,4 +1,5 @@
 import { BallBounce, ChangeBallDirection, IncreaseBallSpeedPerHit } from './ball.js'
+import { randomColor } from './fun.js';
 
 // Gets the collision between two objects.
 function BallHitRacket(ball, player) {
@@ -22,6 +23,7 @@ function BallHitRacket(ball, player) {
 
 function collision(ball, angle, playerOne, playerTwo) {
     if (BallHitRacket(ball, playerOne) || BallHitRacket(ball, playerTwo)) {
+        randomColor();
         ChangeBallDirection(ball);
         IncreaseBallSpeedPerHit(ball);
         BallBounce(ball, angle);

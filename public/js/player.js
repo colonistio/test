@@ -64,11 +64,8 @@ function playersLogic(playerOne, playerTwo) {
     playerOne.y -= playerOne.direction * playerOne.speed; // Move playerOne horizontally based on the direction * speed.
     playerTwo.y -= playerTwo.direction * playerTwo.speed; // Move playerTwo vertically based on the direction * speed.
 
-    detectPlayerKeysDown(playerOne, playerTwo);
-    detectPlayerKeysUp(playerOne, playerTwo);
-
     playerToCanvasBounds(playerOne);
     playerToCanvasBounds(playerTwo);
 }
 
-export { playersLogic, resetPlayerPosition };
+export { playersLogic, resetPlayerPosition, detectPlayerKeysDown, detectPlayerKeysUp };

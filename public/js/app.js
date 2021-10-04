@@ -38,13 +38,10 @@ var app = {
 
 		for (var index in this.nodes) {
 			var node = this.nodes[index];
-			if (node.id === 'score') {
+			if (node.id.includes("text")) {
 				this.drawText(node);
-			} else if (node.id === 'ball') {
-				this.context.fillStyle = node.color;
-				this.context.beginPath();
-				this.context.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
-				this.context.fill();
+			} else if (node.id.includes("ball")) {
+				this.drawCircle(node);
 			}
 			else {
 				this.context.fillStyle = node.color;
@@ -64,8 +61,14 @@ var app = {
 		}
 		return { x: null, y: null, width: null, height: null };
 	},
+	drawCircle: function (node) {
+		this.context.fillStyle = node.color;
+		this.context.beginPath();
+		this.context.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+		this.context.fill();
+	},
 	drawText: function (node) {
-		this.context.font = "30px Arial";
+		this.context.font = "20px Arial";
 		this.context.fillText(node.text, node.x, node.y);
 	}, reset: function () {
 		var gameState = this.getNode('gameState');
@@ -77,8 +80,10 @@ var app = {
 		gameState.paused = false;
 		gameState.end = false;
 
-		this.getNode('score').x = this.getNode('score').x;
-		this.getNode('score').text = '0 - 0';
+		this.getNode('textScore').x = this.getNode('textScore').x;
+		this.getNode('textScore').text = '0 - 0';
+
+		this.getNode('textStatus').text = '';
 	},
 	pause: function () {
 		var gameState = this.getNode('gameState');
@@ -86,8 +91,6 @@ var app = {
 
 		if (gameState.end) {
 			app.reset();
-		} else if (gameState.reset) {
-			gameState.paused = false;
 		} else {
 			gameState.paused = !gameState.paused;
 		}
