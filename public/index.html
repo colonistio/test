@@ -15,6 +15,8 @@
       //Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
       import { PlayersLogic } from "./js/player.js";
+      import { BallLogic, BallAngle } from "./js/ball.js";
+      import { BallRacketBounce } from "./js/collision.js";
 
       app.onInit = function () {
         const app = this;
@@ -154,6 +156,7 @@
         function RandomBallXDirection() {
           return Math.random(1) < 0.5 ? -1 : 1;
         }
+
         function RandomBallYDirection() {
           return Math.random(1) + 0.2;
         }
@@ -175,7 +178,10 @@
           }
         }
 
+        let angle = BallAngle(ball);
         PlayersLogic(playerOne, playerTwo);
+        BallLogic(ball, angle);
+        BallRacketBounce(ball, angle, playerOne, playerTwo);
       };
     </script>
   </body>
