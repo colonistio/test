@@ -1,5 +1,7 @@
 # Intro
 https://youtu.be/xyVh5XUqDkE
+and preview:
+https://youtu.be/MzaKKyor1gA
 
 Specifications requested:
 
@@ -20,3 +22,4 @@ Specifications requested:
 ## Notes (done)
 - Make sure game has state functions like reset, start and pause. We should be able to trigger them with ```app.reset()``` or ```app.pause()```.
 - Make sure players or ball uses app.width and app.height values dynamicly, hard coded values will be rejected.
+q
