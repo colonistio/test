@@ -1,3 +1,9 @@
+# Intro
+https://youtu.be/xyVh5XUqDkE
+
+Specifications requested:
+
+
 ## Todo
 - Make the game cover the whole browser
 - Add keyboard functionalities for both players, W and S for one player, Up and Down for another player.
