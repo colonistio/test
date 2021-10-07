@@ -44,6 +44,7 @@ Please start server with ```node index.js```.
 ## Notes
 - Make sure game has state functions like reset, start and pause. We should be able to trigger them with ```app.reset()``` or ```app.pause()```.
 - Make sure players or ball uses app.width and app.height values dynamicly, hard coded values will be rejected.
+- You don't have to use any, but if you do use maximum 2 node modules
 
 ## Guidelines
 - Break down your commits into the smallest commit that represents a cohesive feature that is in a build-able state.
