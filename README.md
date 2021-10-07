@@ -7,7 +7,7 @@ Implement a ping pong game according to the template.
 - Fork repository
 - All work should be done in your own repository now.
 - Create a new branch and work on that branch.
-- Do not push commit or push anything to this repo (colonist/colonist-test)!
+- Do not push commit or push anything to this repo (colonist/test)!
 - [Read & apply the best practices](https://medium.com/@hugooodias/the-anatomy-of-a-perfect-pull-request-567382bb6067).
 
 ## Template
