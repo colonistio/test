@@ -1,3 +1,8 @@
+# Intro
+https://youtu.be/xyVh5XUqDkE
+and preview:
+https://youtu.be/MzaKKyor1gA
+
 # Colonist Test Game
 Implement a ping pong game according to the template. 
 
