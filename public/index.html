@@ -1,46 +1,375 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Ping Pong Game</title>
 </head>
-<body>
-	<canvas id="canvas" width="800" height="400"></canvas>
-	<script type="text/javascript" src="js/app.js"></script>
-	<script type="text/javascript">
-		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
-		app.onInit = function(){
-			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
-				y  : 0,
-				width  : 100,
-				height : 100,
-				color  : 'red',
-				direction : 0
-			});
+<body style="margin:0px">
 
-			this.nodes.push({
-				id : 'black-box',
-				x  : 50,
-				y  : 0,
-				width  : 150,
-				height : 150,
-				color  : 'black'
-			});
-		};
+	<canvas id="canvas"></canvas>
+</body>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript">
+	//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
-		app.onUpdate = function(time){
-			this.getNode('black-box').y++;
+	var canvas;
+	var context;
+	var canvasWidth;
+	var canvasHeight;
+	var grid = 25;
+	var paddleHeight = grid * 6;
+	var maxPaddleY = canvasHeight;
+	var paddleSpeed = 20;
+	var ballSpeed = 10;
+	var player1Points = 0;
+	var player2Points = 0;
+	var isGamePaused = false;
+	var state = "start"
 
-			if(Math.cos(this.timestamp / 100) > 0){
-				this.getNode('red-box').direction = -1;
-			}else{
-				this.getNode('red-box').direction = 1;
+	app.onInit = function () {
+
+		fncResize();
+
+		this.nodes.push({
+			id: 'player1',
+			type: "square",
+			x: 0,
+			y: canvasHeight / 2 - paddleHeight / 2,
+			width: grid,
+			height: paddleHeight,
+			dy: 0,
+			color: '#faed72',
+			direction: 0
+		});
+
+		this.nodes.push({
+			id: 'player2',
+			type: "square",
+			x: canvasWidth - grid * 1,
+			y: canvasHeight / 2 - paddleHeight / 2,
+			width: grid,
+			height: paddleHeight,
+			dy: 0,
+			color: '#ff9900',
+			direction: 0
+		});
+
+		this.nodes.push({
+			id: 'net',
+			type: "line",
+			x: canvasWidth / 2,
+			y: canvasHeight / 2 
+		});
+
+
+	
+		this.nodes.push({
+			id: 'ball',
+			type: "round",
+			x: canvasWidth / 2,
+			y: canvasHeight / 2,
+			width: grid,
+			height: grid,
+			radius: 20,
+			dx: ballSpeed,
+			dy: -ballSpeed,
+			color: '#c6e2ff',
+			resetting: false,
+		});
+
+	
+
+		this.nodes.push({
+			id: 'player1ScoreText',
+			type: "text",
+			font: "30px Helvetica",
+			x: canvasWidth * 0.03,
+			y: canvasHeight * 0.05,
+			//align: "right",
+			align: "start",
+			input: "Player 1 Score : " + player1Points,
+			color: '#faed72'
+		});
+
+
+		this.nodes.push({
+			id: 'player2ScoreText',
+			type: "text",
+			font: "30px Helvetica",
+			x: canvasWidth - (canvasWidth * 0.2),
+			y: canvasHeight * 0.05,
+			//align: "right",
+			align: "start",
+			input: "Player 2 Score : " + player2Points,
+			color: '#ff9900'
+		});
+
+		this.nodes.push({
+			id: 'dim',
+			type: "square",
+			x: 0,
+			y: 0,
+			alpha: 0.5,
+			width: canvasWidth,
+			height: canvasHeight,
+			//color: 'black'
+			color: 'rgba(0, 0, 0, 0)'
+		}); 
+
+		this.nodes.push({
+			id: 'gamePaused',
+			type: "text",
+			font: "40px Helvetica",
+			x: canvasWidth / 2 - (canvasWidth * 0.08),
+			y: canvasHeight / 2,
+			input: "GAME PAUSED",
+			//align: "center",
+			color: 'rgba(255, 255, 255, 0)'
+			//color: 'white'
+		});
+
+	};
+
+	function fncSetScore() {
+
+		app.getNode('player1ScoreText').input = "Player 1 Score : " + player1Points;
+		app.getNode('player2ScoreText').input = "Player 2 Score : " + player2Points;
+		fncReset();
+
+		console.log("Player 1 Score : " + player1Points);
+		console.log("Player 2 Score : " + player2Points);
+		console.log("===========================");
+
+	}
+
+
+	function fncReset(param) {
+		app.getNode('player1').x = 0;
+		app.getNode('player1').y = canvasHeight / 2 - paddleHeight / 2;
+
+		app.getNode('player2').x = (canvasWidth - grid),
+		app.getNode('player2').y = canvasHeight / 2 - paddleHeight / 2;
+
+		app.getNode('ball').resetting = false;
+		app.getNode('ball').x = canvasWidth / 2;
+		app.getNode('ball').y = canvasHeight / 2;
+		state = "reset";
+		fncPaused(false);
+	}
+
+	function fncPaused(param) {
+		isGamePaused = param;
+		if(param){
+			app.getNode('dim').color = 'rgba(0, 0, 0, 0.5)';
+			app.getNode('gamePaused').color = 'rgba(255, 255, 255, 1)';
+		}else{
+			app.getNode('dim').color = 'rgba(0, 0, 0, 0)';
+			app.getNode('gamePaused').color = 'rgba(255, 255, 255, 0)';
+		}
+		
+
+
+	}
+
+	document.addEventListener('keydown', function (e) {
+
+		if (e.which === 32) {
+			// w key	
+			if (state == "start" || state == "reset") {
+
+				state = "inprogress";
+			} else {
+				if (!isGamePaused) {
+
+					fncPaused(true)
+
+				} else {
+					fncPaused(false)
+
+				}
 			}
 
-			this.getNode('red-box').x+=this.getNode('red-box').direction;
-		};
-	</script>
+		}
+
+		// PLAYER 1
+		if (e.which === 87) {
+			// w key	
+			app.getNode('player1').dy = -paddleSpeed;
+		} else if (e.which === 83) {
+			// a key
+			app.getNode('player1').dy = paddleSpeed;
+		}
+
+		// PLAYER 2
+		if (e.which === 38) {
+			// up arrow key
+			app.getNode('player2').dy = -paddleSpeed;
+		} else if (e.which === 40) {
+			// down arrow key
+			app.getNode('player2').dy = paddleSpeed;
+		}
+	});
+
+	document.addEventListener('keyup', function (e) {
+		if (e.which === 38 || e.which === 40) {
+			app.getNode('player2').dy = 0;
+		}
+
+		if (e.which === 83 || e.which === 87) {
+			app.getNode('player1').dy = 0;
+		}
+	});
+
+	function collides(obj1, obj2) {
+		return obj1.x < obj2.x + obj2.width &&
+			obj1.x + obj1.width > obj2.x &&
+			obj1.y < obj2.y + obj2.height &&
+			obj1.y + obj1.height > obj2.y;
+	}
+
+
+	app.onUpdate = function (time) {
+
+		if (isGamePaused) return;
+
+		app.getNode('player1').y += app.getNode('player1').dy;
+		app.getNode('player2').y += app.getNode('player2').dy;
+
+		// prevent paddles from going through walls
+		if (app.getNode('player1').y < 0) {
+			app.getNode('player1').y = 0;
+		} else if (app.getNode('player1').y > maxPaddleY) {
+			app.getNode('player1').y = maxPaddleY;
+		}
+
+		if (app.getNode('player2').y < 0) {
+			app.getNode('player2').y = 0;
+		} else if (app.getNode('player2').y > maxPaddleY) {
+			app.getNode('player2').y = maxPaddleY;
+		}
+
+
+		if (state == "inprogress") {
+			app.getNode('ball').x += app.getNode('ball').dx;
+			app.getNode('ball').y += app.getNode('ball').dy;
+		}
+
+
+
+		// prevent ball from going through walls by changing its velocity
+		if (app.getNode('ball').y < grid) {
+			app.getNode('ball').y = grid;
+			app.getNode('ball').dy *= -1;
+		} else if (app.getNode('ball').y + grid > canvasHeight - grid) {
+			app.getNode('ball').y = canvasHeight - grid * 2;
+			app.getNode('ball').dy *= -1;
+		}
+
+
+		// reset ball if it goes past paddle (but only if we haven't already done so)
+		if ((app.getNode('ball').x < 0 || app.getNode('ball').x > canvasWidth) && !app.getNode('ball').resetting) {
+			app.getNode('ball').resetting = true;
+
+			if (app.getNode('ball').x < 0) {
+				player2Points++;
+			} else {
+				player1Points++;
+			}
+			fncSetScore();
+
+			// give some time for the player to recover before launching the ball again
+			setTimeout(() => {
+				app.getNode('ball').resetting = false;
+				app.getNode('ball').x = canvasWidth / 2;
+				app.getNode('ball').y = canvasHeight / 2;
+			}, 0);
+		}
+
+
+		if (collides(app.getNode('ball'), app.getNode('player1'))) {
+			app.getNode('ball').dx *= -1;
+
+			// move ball next to the paddle otherwise the collision will happen again
+			// in the next frame
+			app.getNode('ball').x = app.getNode('player1').x + app.getNode('player1').width;
+		} else if (collides(app.getNode('ball'), app.getNode('player2'))) {
+			app.getNode('ball').dx *= -1;
+
+			// move ball next to the paddle otherwise the collision will happen again
+			// in the next frame
+			app.getNode('ball').x = app.getNode('player2').x - app.getNode('ball').width;
+		}
+
+		for (let i = grid; i < canvasHeight - grid; i += grid * 2) {
+			app.getNode('net').y = i;
+		}
+
+		app.clear();
+
+	};
+
+	app.reset = function () {
+		player1Points = 0;
+		player2Points = 0;
+		fncSetScore();
+		fncReset();
+	}
+
+	app.start = function () {
+		fncPaused(false)
+		state = "inprogress";
+	}
+
+	app.onPause = function () {
+		fncPaused(true)
+	};
+
+	function fncResize() {
+		canvasWidth = window.innerWidth - 3.8;
+		canvasHeight = window.innerHeight - 3.8;
+
+		context = app.context;
+		canvas = app.canvas;
+		canvas.width = canvasWidth;
+		canvas.height = canvasHeight;
+		canvas.style.background = '#335F51';
+
+		app.width = canvasWidth;
+		app.height = canvasHeight;
+
+		app.getNode('player1').x = 0;
+		app.getNode('player1').y = canvasHeight / 2 - paddleHeight / 2;
+
+		app.getNode('player2').x = (canvasWidth - grid),
+		app.getNode('player2').y = canvasHeight / 2 - paddleHeight / 2;
+
+		app.getNode('player1ScoreText').x = canvasWidth * 0.03;
+		app.getNode('player2ScoreText').x = canvasWidth - (canvasWidth * 0.2);
+
+		app.getNode('dim').width = canvasWidth;
+		app.getNode('dim').height = canvasHeight;
+
+		app.getNode('gamePaused').x = canvasWidth / 2 - (canvasWidth * 0.08);
+
+		app.getNode('net').x = canvasWidth / 2;
+		app.getNode('net').y = canvasHeight / 2;
+
+		if(state != "inprogress"){
+			app.getNode('ball').x = canvasWidth / 2;
+			app.getNode('ball').y = canvasHeight / 2;
+		}
+		
+
+
+
+		maxPaddleY = canvasHeight - paddleHeight;
+
+	}
+
+	window.onresize = fncResize;
+
+</script>
 </body>
+
 </html>
