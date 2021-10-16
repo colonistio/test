@@ -10,36 +10,62 @@
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
 		app.onInit = function(){
+			
 			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
+				id : 'player1',
+				x  : this.width/2-this.width/20,
 				y  : 0,
-				width  : 100,
-				height : 100,
+				width  : this.width/10,
+				height : this.height/20,
 				color  : 'red',
 				direction : 0
 			});
 
 			this.nodes.push({
-				id : 'black-box',
-				x  : 50,
-				y  : 0,
-				width  : 150,
-				height : 150,
+				id : 'player2',
+				x  : this.width/2-this.width/20,
+				y  : this.height-this.height/6,
+				width  : this.width/10,
+				height : this.height/20,
+				color  : 'red',
+				direction : 0
+			});
+
+			this.nodes.push({
+				id : 'ball',
+				x  : this.width/2,
+				y  : (this.height-this.height/6)/2,
+				width  : this.width/100,
+				height : this.height/30,
 				color  : 'black'
 			});
 		};
 
 		app.onUpdate = function(time){
-			this.getNode('black-box').y++;
+			//resizing canvas to window's full width and height
+			this.width=window.innerWidth;
+			this.height=window.innerHeight;
 
-			if(Math.cos(this.timestamp / 100) > 0){
-				this.getNode('red-box').direction = -1;
-			}else{
-				this.getNode('red-box').direction = 1;
-			}
 
-			this.getNode('red-box').x+=this.getNode('red-box').direction;
+
+			//adjusting the properties of player1 according to the window size
+			this.getNode('player1').x = ((this.getNode('player1').x * this.width)/(this.getNode('player1').width*10));
+			this.getNode('player1').width=this.width/10;
+			this.getNode('player1').height=this.height/20;
+
+			//adjusting the properties of player2 according to the window size
+			this.getNode('player2').x = ((this.getNode('player1').x * this.width)/(this.getNode('player1').width*10));
+			this.getNode('player2').y = this.height-this.height/6;
+			this.getNode('player2').width = this.width/10;
+			this.getNode('player2').height = this.height/20;
+
+			//adjusting height and width of ball
+			this.getNode('ball').x = ((this.getNode('ball').x * this.width)/(this.getNode('ball').width*100));
+			this.getNode('ball').y = ((this.getNode('ball').y * this.height)/(this.getNode('ball').height*30))
+			this.getNode('ball').width = this.width/100;
+			this.getNode('ball').height = this.height/30;
+
+			
 		};
 	</script>
 </body>
