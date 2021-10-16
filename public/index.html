@@ -11,13 +11,24 @@
 
 		app.onInit = function(){
 			
+			
+			this.nodes.push({
+				id : 'gameScreen',
+				x  : 0,
+				y  : 0,
+				width  : this.width,
+				height : this.height,
+				color  : 'black',
+				direction : 0
+			});
+			
 			this.nodes.push({
 				id : 'player1',
 				x  : this.width/2-this.width/20,
 				y  : 0,
 				width  : this.width/10,
 				height : this.height/20,
-				color  : 'red',
+				color  : 'white',
 				direction : 0
 			});
 
@@ -27,7 +38,7 @@
 				y  : this.height-this.height/6,
 				width  : this.width/10,
 				height : this.height/20,
-				color  : 'red',
+				color  : 'white',
 				direction : 0
 			});
 
@@ -37,16 +48,58 @@
 				y  : (this.height-this.height/6)/2,
 				width  : this.width/100,
 				height : this.height/30,
-				color  : 'black'
+				color  : 'red'
 			});
+
+			let newId=0;
+			let cnt=0;
+			while(newId < this.width)
+			{
+				this.nodes.push({
+				id : 'divide'+String(cnt++),
+				x  : newId,
+				y  : (this.height-this.height/6)/2,
+				width  : this.width/30,
+				height : this.height/120,
+				color  : 'white'
+			});
+
+			newId=newId+2*this.width/30;
+
+			}
 		};
 
 		app.onUpdate = function(time){
+
+			
 			//resizing canvas to window's full width and height
-			this.width=window.innerWidth;
-			this.height=window.innerHeight;
+			this.width = window.innerWidth;
+			this.height = window.innerHeight;
 
+			//adjusting the properties of gamescreen according to the window size
 
+			this.getNode('gameScreen').width = this.width;
+			this.getNode('gameScreen').height = this.height;
+
+			//adjusting the properties of divider according to the window size
+
+			let newId=0;
+			let cnt=0
+			while(newId < this.width)
+			{
+			
+			this.getNode('divide'+String(cnt)).height = this.height/120;
+			this.getNode('divide'+String(cnt)).width = this.width/30;
+			this.getNode('divide'+String(cnt)).x = newId;
+			this.getNode('divide'+String(cnt)).y = (this.height-this.height/6)/2;
+			
+			cnt++;
+
+			newId=newId+2*this.width/30;
+			
+			}
+
+			
 
 			//adjusting the properties of player1 according to the window size
 			this.getNode('player1').x = ((this.getNode('player1').x * this.width)/(this.getNode('player1').width*10));
