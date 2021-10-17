@@ -8,7 +8,40 @@
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
+		function eventTrigger(event){
 
+			if(event.keyCode == 32)
+				{
+					this.getNode('ball').gamePause = ! this.getNode('ball').gamePause;
+					console.log(this.getNode('ball').gamePause);
+				}
+			
+		}
+
+		function isStriked(ball,player){
+			let xCondition = ((ball.x + ball.width >= player.x) && (ball.x <= player.x +player.width));
+			let yCondition;
+			if(player.top){
+				yCondition = ((ball.y >= player.y) && (ball.y <= (player.y + player.height) ));
+			}
+			else{
+				yCondition = (((ball.y + ball.height) >= player.y) && (ball.y <= (player.y +player.height)));
+			}
+			if(xCondition && yCondition)
+				return true;
+			return false;
+		}
+
+		function delay(ms){
+
+			let t1=new Date().getTime();
+			let t2=t1;
+			while(t2 < t1 + ms)
+			{
+				t2=new Date().getTime();
+			}
+
+		}
 		app.onInit = function(){
 			
 			
@@ -29,7 +62,9 @@
 				width  : this.width/10,
 				height : this.height/20,
 				color  : 'white',
-				direction : 0
+				direction : 0,
+				score : 0,
+				top : true
 			});
 
 			this.nodes.push({
@@ -39,7 +74,9 @@
 				width  : this.width/10,
 				height : this.height/20,
 				color  : 'white',
-				direction : 0
+				direction : 0,
+				score : 0,
+				top : false
 			});
 
 			this.nodes.push({
@@ -48,7 +85,10 @@
 				y  : (this.height-this.height/6)/2,
 				width  : this.width/100,
 				height : this.height/30,
-				color  : 'red'
+				color  : 'red',
+				velocityX: this.width/100,
+				velocityY: this.height/30,
+				gamePause : true
 			});
 
 			let newId=0;
@@ -67,6 +107,10 @@
 			newId=newId+2*this.width/30;
 
 			}
+			let triggeredevent = eventTrigger.bind(this);
+			document.addEventListener('keydown', function(event){
+				triggeredevent(event);
+			},true);
 		};
 
 		app.onUpdate = function(time){
@@ -99,26 +143,53 @@
 			
 			}
 
-			
+			let player1 = this.getNode('player1');
+			let player2 = this.getNode('player2');
+			let ball = this.getNode('ball');
 
 			//adjusting the properties of player1 according to the window size
-			this.getNode('player1').x = ((this.getNode('player1').x * this.width)/(this.getNode('player1').width*10));
-			this.getNode('player1').width=this.width/10;
-			this.getNode('player1').height=this.height/20;
+			player1.x = ((player1.x * this.width)/(player1.width*10));
+			player1.width=this.width/10;
+			player1.height=this.height/20;
 
 			//adjusting the properties of player2 according to the window size
-			this.getNode('player2').x = ((this.getNode('player1').x * this.width)/(this.getNode('player1').width*10));
-			this.getNode('player2').y = this.height-this.height/6;
-			this.getNode('player2').width = this.width/10;
-			this.getNode('player2').height = this.height/20;
+			player2.x = ((player2.x * this.width)/(player2.width*10));
+			player2.y = this.height-this.height/6;
+			player2.width = this.width/10;
+			player2.height = this.height/20;
 
 			//adjusting height and width of ball
-			this.getNode('ball').x = ((this.getNode('ball').x * this.width)/(this.getNode('ball').width*100));
-			this.getNode('ball').y = ((this.getNode('ball').y * this.height)/(this.getNode('ball').height*30))
-			this.getNode('ball').width = this.width/100;
-			this.getNode('ball').height = this.height/30;
+			ball.x = ((ball.x * this.width)/(ball.width*100));
+			ball.y = ((ball.y * this.height)/(ball.height*30))
+			ball.width = this.width/100;
+			ball.height = this.height/30;
 
 			
+			//implementing the functionality of the game
+			if(ball.gamePause != true){
+				delay(10);
+				ball.x+=ball.velocityX;
+				ball.y+=ball.velocityY;
+
+				//Checking whether the ball is hitted by Player or not
+
+				if(isStriked(ball,player1) || isStriked(ball,player2)){
+					ball.velocityY=-1*ball.velocityY;
+				}
+
+
+				//Checking for boundary Hitting Condition
+				if( ball.x + ball.width >= this.width || ball.x <= 0 ){
+					ball.velocityX = -1 * ball.velocityX;
+				}
+				
+				if( ball.y + ball.height >= this.height || ball.y <= 0 ){
+					ball.velocityY = -1 * ball.velocityY;
+				}
+
+
+
+			}
 		};
 	</script>
 </body>
