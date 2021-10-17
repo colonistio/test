@@ -8,13 +8,62 @@
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
-		function eventTrigger(event){
+		
+		function movePaddle(controller){
+			let player1 = this.getNode('player1');
+			let player2 = this.getNode('player2');
+			let ball = this.getNode('ball');
 
-			if(event.keyCode == 32)
-				{
-					this.getNode('ball').gamePause = ! this.getNode('ball').gamePause;
-					console.log(this.getNode('ball').gamePause);
-				}
+			if(ball.gamePause)
+				return true;
+			//If Left Arrow is Clicked then player2 will move in left direction
+			if(controller[37].active){
+				player2.x = player2.x > 0 ? (player2.x - player2.width/10):player2.x;
+			}
+
+			//If Right Arrow is Clicked then player2 will move in right direction
+			if(controller[39].active){
+				player2.x = player2.x + player2.width < this.width ? (player2.x + player2.width/10) : player2.x;
+			}
+
+			//If W is Clicked then player1 will move in left direction
+			if(controller[87].active){
+				player1.x = player1.x > 0 ? (player1.x - player1.width/10):player1.x;
+			}
+
+			//If S is Clicked then player2 will move in Right direction
+			if(controller[83].active){
+				player1.x = player1.x + player1.width < this.width ? (player1.x + player1.width/10) : player2.x;
+			}
+
+		}
+		function eventTrigger(event,controller,up){
+			console.log(event.keyCode);
+
+			let ball = this.getNode('ball');
+			//If space is clicked then pause the game
+			if(event.keyCode == 32 && !up){
+					ball.gamePause = ! ball.gamePause;
+					console.log(ball.gamePause);
+					return;
+			}
+
+			if(controller[event.keyCode] && !up){
+				controller[event.keyCode].active = true;
+			}
+
+			if(controller[event.keyCode] && up){
+				controller[event.keyCode].active = false;
+			}
+
+
+
+
+			
+			
+	
+
+
 			
 		}
 
@@ -108,9 +157,26 @@
 
 			}
 			let triggeredevent = eventTrigger.bind(this);
+			let paddleMover = movePaddle.bind(this);
+
+			let controller = {
+			  87: {active: false},
+  			  83: {active: false},
+              37: {active: false},
+              39: {active: false},
+             }
+
 			document.addEventListener('keydown', function(event){
-				triggeredevent(event);
+				triggeredevent(event,controller,false);
+				paddleMover(controller);
 			},true);
+
+			document.addEventListener('keyup', function(event){
+				triggeredevent(event,controller,true);
+				paddleMover(controller);
+			},true);
+
+
 		};
 
 		app.onUpdate = function(time){
