@@ -38,13 +38,11 @@
 
 		}
 		function eventTrigger(event,controller,up){
-			console.log(event.keyCode);
 
 			let ball = this.getNode('ball');
 			//If space is clicked then pause the game
 			if(event.keyCode == 32 && !up){
 					ball.gamePause = ! ball.gamePause;
-					console.log(ball.gamePause);
 					return;
 			}
 
@@ -182,6 +180,7 @@
 		app.onUpdate = function(time){
 
 			
+
 			//resizing canvas to window's full width and height
 			this.width = window.innerWidth;
 			this.height = window.innerHeight;
@@ -251,6 +250,12 @@
 				
 				if( ball.y + ball.height >= this.height || ball.y <= 0 ){
 					ball.velocityY = -1 * ball.velocityY;
+					if(ball.y<=0)
+						player2.score++;
+					else
+						player1.score++;
+					console.log("Player 1 Score:",player1.score);
+					console.log("Player 2 Score:",player2.score);
 				}
 
 
