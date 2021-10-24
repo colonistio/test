@@ -33,7 +33,7 @@
 
 			//If S is Clicked then player2 will move in Right direction
 			if(controller[83].active){
-				player1.x = player1.x + player1.width < this.width ? (player1.x + player1.width/5) : player2.x;
+				player1.x = (player1.x + player1.width < this.width) ? (player1.x + player1.width/5) : player1.x;
 			}
 
 		}
