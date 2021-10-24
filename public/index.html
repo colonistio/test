@@ -18,22 +18,22 @@
 				return true;
 			//If Left Arrow is Clicked then player2 will move in left direction
 			if(controller[37].active){
-				player2.x = player2.x > 0 ? (player2.x - player2.width/10):player2.x;
+				player2.x = player2.x > 0 ? (player2.x - player2.width/5):player2.x;
 			}
 
 			//If Right Arrow is Clicked then player2 will move in right direction
 			if(controller[39].active){
-				player2.x = player2.x + player2.width < this.width ? (player2.x + player2.width/10) : player2.x;
+				player2.x = player2.x + player2.width < this.width ? (player2.x + player2.width/5) : player2.x;
 			}
 
 			//If W is Clicked then player1 will move in left direction
 			if(controller[87].active){
-				player1.x = player1.x > 0 ? (player1.x - player1.width/10):player1.x;
+				player1.x = player1.x > 0 ? (player1.x - player1.width/5):player1.x;
 			}
 
 			//If S is Clicked then player2 will move in Right direction
 			if(controller[83].active){
-				player1.x = player1.x + player1.width < this.width ? (player1.x + player1.width/10) : player2.x;
+				player1.x = player1.x + player1.width < this.width ? (player1.x + player1.width/5) : player2.x;
 			}
 
 		}
@@ -133,8 +133,8 @@
 				width  : this.width/100,
 				height : this.height/30,
 				color  : 'red',
-				velocityX: this.width/100,
-				velocityY: this.height/30,
+				velocityX: this.width/200,
+				velocityY: this.height/60,
 				gamePause : true
 			});
 
@@ -175,11 +175,37 @@
 			},true);
 
 
+			// Adding Score Functionality
+			
+			
+
+			this.text.push({
+				id : 'player1score',
+				x : 0,
+				y :this.height/2 - this.height/9,
+				color : "red",
+				key : "Score:",
+				value : this.getNode("player1").score,
+				fontSize : "20px",
+				font: "Arial"
+			});
+
+			this.text.push({
+				id : 'player2score',
+				x : 0,
+				y :this.height/2 -this.height/120 ,
+				color : "red",
+				key : "Score:",
+				value : this.getNode("player2").score,
+				fontSize : "20px",
+				font: "Arial"
+			});
+
+
 		};
 
 		app.onUpdate = function(time){
 
-			
 
 			//resizing canvas to window's full width and height
 			this.width = window.innerWidth;
@@ -211,6 +237,9 @@
 			let player1 = this.getNode('player1');
 			let player2 = this.getNode('player2');
 			let ball = this.getNode('ball');
+			let player1score = this.getText('player1score');
+			let player2score = this.getText('player2score');
+
 
 			//adjusting the properties of player1 according to the window size
 			player1.x = ((player1.x * this.width)/(player1.width*10));
@@ -229,7 +258,14 @@
 			ball.width = this.width/100;
 			ball.height = this.height/30;
 
-			
+			//adjusting the position of score system and values assigned to it
+			player1score.y = this.height/2 - this.height/9;
+			player1score.value = this.getNode("player1").score;
+
+			player2score.y = this.height/2 -this.height/120;
+			player2score.value = this.getNode("player2").score;
+
+
 			//implementing the functionality of the game
 			if(ball.gamePause != true){
 				delay(10);
