@@ -90,7 +90,8 @@ var app = {
 
 	//events
 	onInit   : function(){},
-	onUpdate : function(){}
+	onUpdate : function(){},
+	reset : function(){}
 };
 
 window.onload = function(){
