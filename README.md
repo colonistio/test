@@ -37,7 +37,7 @@ Please start server with ```node index.js```.
 
 ## After Finishing
 - On your repository create a PR merging your feature branch into your master branch.
-- Add a very good description on what it is, make sure to include a very short video showcasing what you've made. 
+- On you PR add a [very good description](https://www.pullrequest.com/blog/writing-a-great-pull-request-description/) on what it is, make sure to include a very short video showcasing what you've made. 
 - Invite collaborators `demiculus` & `goktugyil` to the repo.
 - Request reviews for the PR from `demiculus` & `goktugyil`.
 
