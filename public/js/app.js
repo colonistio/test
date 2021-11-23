@@ -14,6 +14,8 @@ var app = {
 	timestamp  : 0,
 	now        : 0,
 	lastUpdate : 0,
+	//other vars
+	paused : false,
 
 	init : function(){
 		this.canvas  = document.getElementById('canvas');
@@ -32,9 +34,11 @@ var app = {
 		this.context.clearRect(0, 0, this.width, this.height);
 	},
 	update : function(){
+		if (!app.paused){ //do nothing
+			this.onUpdate(dt);
+		}
 	    var dt = Date.now() - this.lastUpdate;
 
-		this.onUpdate(dt);
 
 		for(var index in this.nodes){
 			var node = this.nodes[index];
@@ -60,7 +64,16 @@ var app = {
 
 	//events
 	onInit   : function(){},
-	onUpdate : function(){}
+	onUpdate : function(){},
+	
+	reset : function(){		
+		this.nodes = []
+		this.onInit();
+	},
+	togglePause : function(){
+		this.paused = !this.paused;
+	}
+
 };
 
 window.onload = function(){
