@@ -16,6 +16,8 @@ var app = {
 	lastUpdate : 0,
 	//other vars
 	paused : false,
+	p1Score : 0,
+	p2Score : 0,
 
 	init : function(){
 		this.canvas  = document.getElementById('canvas');
