@@ -18,10 +18,27 @@
 			direction: 0, //can be 0, 1 or -1
 			y: 500			
 		}
+		const constants = {
+			SpeedMultiplier: 10,
+
+		}
 		app.onInit = function(){
 			this.canvas.height = document.documentElement.clientHeight;
 			this.canvas.width = document.documentElement.clientWidth;
 			
+			document.addEventListener('keydown', event => {
+				if (event.code === 'KeyW')      player1.direction = -1;
+				if (event.code === 'KeyS')      player1.direction =  1;
+				if (event.code === 'ArrowUp')   player2.direction = -1;
+				if (event.code === 'ArrowDown') player2.direction =  1;
+			});
+			document.addEventListener('keyup', event => {
+				if (event.code === 'KeyW')      player1.direction = 0;
+				if (event.code === 'KeyS')      player1.direction = 0;
+				if (event.code === 'ArrowUp')   player2.direction = 0;
+				if (event.code === 'ArrowDown') player2.direction = 0;
+			})
+
 			this.nodes.push({
 				id     : 'bg',
 				x      : 0,
@@ -50,6 +67,25 @@
 		};
 
 		app.onUpdate = function(time){
+			//moving players
+			player1.y += player1.direction * constants.SpeedMultiplier;
+			if (player1.y > this.canvas.height){
+				player1.y = this.canvas.height;
+			}
+			else if (player1.y < 0) {
+				player1.y = 0;
+			}
+
+			player2.y += player2.direction * constants.SpeedMultiplier;
+			if (player2.y > this.canvas.height){
+				player2.y = this.canvas.height;
+			}
+			else if (player2.y < 0) {
+				player2.y = 0;
+			}
+			//draw
+			this.getNode('p1').y = player1.y;
+			this.getNode('p2').y = player2.y;
 		};
 	</script>
 </body>
