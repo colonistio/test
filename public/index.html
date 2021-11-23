@@ -11,8 +11,9 @@
 		const constants = {
 			SpeedMultiplier: 10,
 			BallSpeed: 5,
-			
 		}
+
+
 		app.onInit = function(){
 			this.canvas.height = document.documentElement.clientHeight;
 			this.canvas.width = document.documentElement.clientWidth;
@@ -24,6 +25,7 @@
 				if (event.code === 'KeyW')      p1.direction = -1;
 				if (event.code === 'ArrowUp')   p2.direction = -1;
 				if (event.code === 'ArrowDown') p2.direction =  1;
+				if (event.code === 'Space')     app.togglePause();
 			});
 			document.addEventListener('keyup', event => {
 				if (event.code === 'KeyW')      p1.direction = 0;
@@ -66,7 +68,7 @@
 				height : 10,
 				color  : 'white',
 				directionX: 1,
-				directionY: -1,
+				directionY: 1,
 
 			})
 
@@ -123,10 +125,12 @@
 				}
 			else if (ball.x < 0){
 				console.log('player 2 wins');
-				
+				app.reset();
 			}
 			else if (ball.x > this.canvas.width){
 				console.log('player 1 wins');
+				app.reset();
+
 			}
 			
 		};
