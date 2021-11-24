@@ -75,19 +75,20 @@
 		};
 
 		app.onUpdate = function(time){
+			p1 = this.getNode('p1');
+			p2 = this.getNode('p2');
 
-			function movePlayer(id) { 
-				player = this.getNode(id);
+			function movePlayer(player) { 
 				player.y += player.direction * constants.SpeedMultiplier;
-				if (player.y > this.canvas.height - player.height){
-					player.y = this.canvas.height - p2.height;
+				if (player.y > app.canvas.height - player.height){
+					player.y = app.canvas.height - player.height;
 				}
 				else if (player.y < 0) {
 					player.y = 0;
 				}
 			}
-			movePlayer('p1');
-			movePlayer('p2');
+			movePlayer(p1);
+			movePlayer(p2);
 			//moving ball
 			ball = this.getNode('ball');
 			ball.y += ball.directionY * constants.BallSpeed;
