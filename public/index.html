@@ -35,7 +35,7 @@
 				if (event.code === 'KeyS')      p1.direction = 0;
 				if (event.code === 'ArrowUp')   p2.direction = 0;
 				if (event.code === 'ArrowDown') p2.direction = 0;
-			})
+			});
 
 			this.nodes.push({
 				id     : 'background',
@@ -44,7 +44,7 @@
 				width  : this.canvas.width,
 				height : this.canvas.height,
 				color  : 'black'
-				})
+				});
 			this.nodes.push({
 				id     : 'p1',
 				x      : constants.MARGIN,
@@ -62,7 +62,7 @@
 				height : constants.PADDLE_HEIGHT,
 				color  : 'white',
 				direction: 0
-			})
+			});
 			this.nodes.push({
 				id     : 'ball',
 				x      : this.canvas.width/2,
@@ -70,10 +70,10 @@
 				width  : 10,
 				height : 10,
 				color  : 'white',
-				directionX: 1,
-				directionY: 1,
+				directionX: Math.random() < 0.5 ? 1  : -1,
+				directionY: Math.random() < 0.5 ? 1  : -1,
 
-			})
+			});
 
 		};
 
@@ -135,7 +135,7 @@
 					}
 				}
 
-				
+
 				movePlayer('p1');
 				movePlayer('p2');
 				moveBall();
