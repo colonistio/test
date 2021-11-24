@@ -35,7 +35,7 @@
 			})
 
 			this.nodes.push({
-				id     : 'bg',
+				id     : 'background',
 				x      : 0,
 				y      : 0,
 				width  : this.canvas.width,
@@ -75,24 +75,19 @@
 		};
 
 		app.onUpdate = function(time){
-			//moving players
-			p1 = this.getNode('p1');
-			p1.y += p1.direction * constants.SpeedMultiplier;
-			if (p1.y > this.canvas.height - p1.height){
-				p1.y = this.canvas.height - p2.height;
+
+			function movePlayer(id) { 
+				player = this.getNode(id);
+				player.y += player.direction * constants.SpeedMultiplier;
+				if (player.y > this.canvas.height - player.height){
+					player.y = this.canvas.height - p2.height;
+				}
+				else if (player.y < 0) {
+					player.y = 0;
+				}
 			}
-			else if (p1.y < 0) {
-				p1.y = 0;
-			}
-			
-			p2 = this.getNode('p2');
-			p2.y += p2.direction * constants.SpeedMultiplier;
-			if (p2.y > this.canvas.height - p2.height){
-				p2.y = this.canvas.height - p2.height;
-			}
-			else if (p2.y < 0) {
-				p2.y = 0;
-			}
+			movePlayer('p1');
+			movePlayer('p2');
 			//moving ball
 			ball = this.getNode('ball');
 			ball.y += ball.directionY * constants.BallSpeed;
@@ -125,7 +120,6 @@
 				}
 			else if (ball.x < 0){
 				console.log(`player 2 wins. Score: ${app.p1Score}-${++app.p2Score}`);
-				console.log ()
 				app.reset();
 			}
 			else if (ball.x > this.canvas.width){
