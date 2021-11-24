@@ -34,6 +34,7 @@
 				if (event.code === 'ArrowDown') p2.direction = 0;
 			})
 
+			
 			this.nodes.push({
 				id     : 'background',
 				x      : 0,
@@ -102,14 +103,15 @@
 				ball.y = this.canvas.height - ball.height;
 
 			}
-			//collision logic. Looks messy but it only checks if there's overlap.
+			//collision logic. 
 			if (
-				p1.x < ball.x + ball.width &&
-        		p1.x + p1.width > ball.x &&
-        		p1.y < ball.y + ball.height &&
-        		p1.height + p1.y > ball.y 
+				//check if there's a collision in:
+				p1.x < ball.x + ball.width &&   //left
+        		p1.x + p1.width > ball.x &&     //right
+        		p1.y < ball.y + ball.height &&  //bottom 
+        		p1.height + p1.y > ball.y       //top 
 
-				|| (
+				|| ( //repeat for the other object
 
 				p2.x < ball.x + ball.width &&
         		p2.x + p2.width > ball.x &&
@@ -117,8 +119,9 @@
         		p2.height + p2.y > ball.y
 
 				)){
-					ball.directionX *= -1;
+					ball.directionX *= -1; //turn the ball X velocity
 				}
+
 			else if (ball.x < 0){
 				console.log(`player 2 wins. Score: ${app.p1Score}-${++app.p2Score}`);
 				app.reset();
