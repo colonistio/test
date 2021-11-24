@@ -9,11 +9,11 @@
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		const constants = {
-			SpeedMultiplier: 10,
-			BallSpeed: 5,
-			paddleWidth: 30,
-			paddleHeight: 250,
-			margin : 10
+			SPEED_MULTIPLIER: 10,
+			BALL_SPEED: 5,
+			PADDLE_WIDTH: 30,
+			PADDLE_HEIGHT: 250,
+			MARGIN : 10
 		}
 
 
@@ -47,19 +47,19 @@
 				})
 			this.nodes.push({
 				id     : 'p1',
-				x      : constants.margin,
+				x      : constants.MARGIN,
 				y      : 500, 
-				width  : constants.paddleWidth,
-				height : constants.paddleHeight,
+				width  : constants.PADDLE_WIDTH,
+				height : constants.PADDLE_HEIGHT,
 				color  : 'white',
 				direction: 0
 			});
 			this.nodes.push({
 				id     : 'p2',
-				x      : this.canvas.width - constants.margin - constants.paddleWidth,
+				x      : this.canvas.width - constants.MARGIN - constants.PADDLE_WIDTH,
 				y      : 500, 
-				width  : constants.paddleWidth,
-				height : constants.paddleHeight,
+				width  : constants.PADDLE_WIDTH,
+				height : constants.PADDLE_HEIGHT,
 				color  : 'white',
 				direction: 0
 			})
@@ -82,7 +82,7 @@
 			p2 = this.getNode('p2');
 
 			function movePlayer(player) { 
-				player.y += player.direction * constants.SpeedMultiplier;
+				player.y += player.direction * constants.SPEED_MULTIPLIER;
 				if (player.y > app.canvas.height - player.height){
 					player.y = app.canvas.height - player.height;
 				}
@@ -94,8 +94,8 @@
 			movePlayer(p2);
 			//moving ball
 			ball = this.getNode('ball');
-			ball.y += ball.directionY * constants.BallSpeed;
-			ball.x += ball.directionX * constants.BallSpeed;
+			ball.y += ball.directionY * constants.BALL_SPEED;
+			ball.x += ball.directionX * constants.BALL_SPEED;
 			if (ball.y < 0 ){
 				ball.directionY *= - 1;
 				ball.y = 1;
