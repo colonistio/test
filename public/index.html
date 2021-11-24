@@ -11,6 +11,9 @@
 		const constants = {
 			SpeedMultiplier: 10,
 			BallSpeed: 5,
+			paddleWidth: 30,
+			paddleHeight: 250,
+			margin : 10
 		}
 
 
@@ -34,7 +37,6 @@
 				if (event.code === 'ArrowDown') p2.direction = 0;
 			})
 
-			
 			this.nodes.push({
 				id     : 'background',
 				x      : 0,
@@ -45,19 +47,19 @@
 				})
 			this.nodes.push({
 				id     : 'p1',
-				x      : 10,
+				x      : constants.margin,
 				y      : 500, 
-				width  : 30,
-				height : 250,
+				width  : constants.paddleWidth,
+				height : constants.paddleHeight,
 				color  : 'white',
 				direction: 0
 			});
 			this.nodes.push({
 				id     : 'p2',
-				x      : this.canvas.width - 10 - 30,
+				x      : this.canvas.width - constants.margin - constants.paddleWidth,
 				y      : 500, 
-				width  : 30,
-				height : 250,
+				width  : constants.paddleWidth,
+				height : constants.paddleHeight,
 				color  : 'white',
 				direction: 0
 			})
@@ -121,7 +123,7 @@
 				)){
 					ball.directionX *= -1; //turn the ball X velocity
 				}
-
+				
 			else if (ball.x < 0){
 				console.log(`player 2 wins. Score: ${app.p1Score}-${++app.p2Score}`);
 				app.reset();
