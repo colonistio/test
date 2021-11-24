@@ -13,15 +13,18 @@
 			BALL_SPEED: 5,
 			PADDLE_WIDTH: 30,
 			PADDLE_HEIGHT: 250,
-			MARGIN : 10
+			MARGIN : 10,
+			BAR_W: 200,
+			BAR_H: 40,
+			PROGRESS_BORDER :3,
 		}
 
 
 		app.onInit = function(){
-			this.canvas.height = document.documentElement.clientHeight;
-			this.canvas.width = document.documentElement.clientWidth;
-			p1 = this.getNode('p1');
-			p2 = this.getNode('p2');
+			app.canvas.height = document.documentElement.clientHeight;
+			app.canvas.width = document.documentElement.clientWidth;
+			p1 = app.getNode('p1');
+			p2 = app.getNode('p2');
 			document.addEventListener('keydown', event => {
 
 				if (event.code === 'KeyS')      p1.direction =  1;
@@ -36,51 +39,94 @@
 				if (event.code === 'ArrowUp')   p2.direction = 0;
 				if (event.code === 'ArrowDown') p2.direction = 0;
 			});
+			function addBase(){
 
-			this.nodes.push({
-				id     : 'background',
-				x      : 0,
-				y      : 0,
-				width  : this.canvas.width,
-				height : this.canvas.height,
-				color  : 'black'
+				app.nodes.push({
+					id     : 'background',
+					x      : 0,
+					y      : 0,
+					width  : app.canvas.width,
+					height : app.canvas.height,
+					color  : 'black'
+					});
+				app.nodes.push({
+					id     : 'p1',
+					x      : constants.MARGIN,
+					y      : 500, 
+					width  : constants.PADDLE_WIDTH,
+					height : constants.PADDLE_HEIGHT,
+					color  : 'white',
+					direction: 0
 				});
-			this.nodes.push({
-				id     : 'p1',
-				x      : constants.MARGIN,
-				y      : 500, 
-				width  : constants.PADDLE_WIDTH,
-				height : constants.PADDLE_HEIGHT,
-				color  : 'white',
-				direction: 0
-			});
-			this.nodes.push({
-				id     : 'p2',
-				x      : this.canvas.width - constants.MARGIN - constants.PADDLE_WIDTH,
-				y      : 500, 
-				width  : constants.PADDLE_WIDTH,
-				height : constants.PADDLE_HEIGHT,
-				color  : 'white',
-				direction: 0
-			});
-			this.nodes.push({
-				id     : 'ball',
-				x      : this.canvas.width/2,
-				y      : this.canvas.height/2,
-				width  : 10,
-				height : 10,
-				color  : 'white',
-				directionX: Math.random() < 0.5 ? 1  : -1,
-				directionY: Math.random() < 0.5 ? 1  : -1,
+				app.nodes.push({
+					id     : 'p2',
+					x      : app.canvas.width - constants.MARGIN - constants.PADDLE_WIDTH,
+					y      : 500, 
+					width  : constants.PADDLE_WIDTH,
+					height : constants.PADDLE_HEIGHT,
+					color  : 'white',
+					direction: 0
+				});
+				app.nodes.push({
+					id     : 'ball',
+					x      : app.canvas.width/2,
+					y      : app.canvas.height/2,
+					width  : 10,
+					height : 10,
+					color  : 'white',
+					directionX: Math.random() < 0.5 ? 1  : -1,
+					directionY: Math.random() < 0.5 ? 1  : -1,
+	
+				});
+			}
+				function addSuperpowers(){
+					app.nodes.push({
+						id     : 'outer1',
+						x      : 40,
+						y      : app.canvas.height - constants.MARGIN - constants.BAR_H,
+						width  : constants.BAR_W,
+						height : constants.BAR_H,
+						color  : 'white'
 
-			});
-			
+					});
+					app.nodes.push({
+						id     : 'outer2',
+						x      : app.canvas.width - 40 - constants.BAR_W,
+						y      : app.canvas.height - constants.MARGIN - constants.BAR_H,
+						width  : constants.BAR_W,
+						height : constants.BAR_H,
+						color  : 'white'
 
+					})
+					outer1 = app.getNode('outer1');
+					outer2 = app.getNode('outer2');
+					app.nodes.push({
+						id     : 'progress1',
+						x      : outer1.x + constants.PROGRESS_BORDER, 
+						y      : outer1.y + constants.PROGRESS_BORDER, 
+						width  : outer1.width - constants.PROGRESS_BORDER * 2, 
+						height : outer1.height - constants.PROGRESS_BORDER * 2, 
+						color  : 'black'
+					})
+					app.nodes.push({
+						id     : 'progress2',
+						x      : outer2.x + constants.PROGRESS_BORDER, 
+						y      : outer2.y + constants.PROGRESS_BORDER, 
+						width  : outer2.width - constants.PROGRESS_BORDER * 2, 
+						height : outer2.height - constants.PROGRESS_BORDER * 2, 
+						color  : 'black'
+					})
+			}
+
+
+
+			addBase();
+			addSuperpowers();
 		};
 
 		app.onUpdate = function(time){
-			p1 = this.getNode('p1');
-			p2 = this.getNode('p2');
+			p1 = app.getNode('p1');
+			p2 = app.getNode('p2');
 
 			function movePlayer(id) { 
 				player = app.getNode(id);
