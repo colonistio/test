@@ -17,6 +17,8 @@ var app = {
 	lastUpdate : 0,
 	//other vars
 	paused : false,
+	dunking : false,
+	dunkNext : false,
 	p1Score : 0,
 	p2Score : 0,
 

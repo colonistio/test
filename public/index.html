@@ -9,15 +9,16 @@
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		const constants = {
-			SPEED_MULTIPLIER: 10,
+			SPEED_MULTIPLIER: 7,
 			BALL_SPEED: 5,
+			DUNK_SPEED: 15,
 			PADDLE_WIDTH: 30,
 			PADDLE_HEIGHT: 250,
 			MARGIN : 10,
 			BAR_W: 200,
 			BAR_H: 40,
 			PROGRESS_BORDER :3,
-			DUNK_BOUNCES : 10,
+			DUNK_BOUNCES : 2,
 		}
 
 
@@ -30,8 +31,10 @@
 
 				if (event.code === 'KeyS')      p1.direction =  1;
 				if (event.code === 'KeyW')      p1.direction = -1;
+				if (event.code === 'KeyD')      dunk('progress1');     
 				if (event.code === 'ArrowUp')   p2.direction = -1;
 				if (event.code === 'ArrowDown') p2.direction =  1;
+				if (event.code === 'ArrowLeft') dunk('progress2');  
 				if (event.code === 'Space')     app.togglePause();
 			});
 			document.addEventListener('keyup', event => {
@@ -130,7 +133,13 @@
 					x : outer2.x, 
 				})
 			}
-
+			function dunk(id){
+				bar = app.getNode(id)
+				if (bar.progress === 0){
+					bar.progress = 	constants.DUNK_BOUNCES;
+					app.dunk_next = true;
+				}
+			}
 
 			addBase();
 			addSuperpowers();
@@ -156,8 +165,14 @@
 				bar1 = app.getNode('progress1');
 				bar2 = app.getNode('progress2');
 				ball = app.getNode('ball');
-				ball.y += ball.directionY * constants.BALL_SPEED;
-				ball.x += ball.directionX * constants.BALL_SPEED;
+				if (app.dunking){
+					ball.y += ball.directionY * constants.DUNK_SPEED
+					ball.x += ball.directionX * constants.DUNK_SPEED
+				}
+				else{
+					ball.y += ball.directionY * constants.BALL_SPEED;
+					ball.x += ball.directionX * constants.BALL_SPEED;					
+				}
 				if (ball.y < 0 ){
 					ball.directionY *= - 1;
 					ball.y = 1;
@@ -194,12 +209,20 @@
 
 				function onBallBounce(player)
 				{
-					bar1.progress--;
-					bar2.progress--;
+					app.dunking = false;
+					if (app.dunk_next){
+						app.dunk_next = false;
+						app.dunking = true;
+					}
+					bar1.progress > 0 ? bar1.progress-- : barFull(bar1);
+					bar2.progress > 0 ? bar2.progress-- : barFull(bar2);
+				}
+				function barFull(bar){
+					
 				}
 				function updateBars(id){
 					bar = app.getNode(id);
-					bar.width = (bar.progress / constants.DUNK_BOUNCES) * constants.BAR_W;
+					bar.width = (bar.progress / constants.DUNK_BOUNCES) * constants.BAR_W - constants.PROGRESS_BORDER * 2;
 				}
 				updateBars('progress1');
 				updateBars('progress2');
