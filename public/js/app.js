@@ -9,6 +9,7 @@ var app = {
 
 	//nodes
 	nodes   : [],
+	textNodes : [],
 
 	//timing
 	timestamp  : 0,
@@ -48,6 +49,13 @@ var app = {
 			this.context.fillStyle = node.color;
 			this.context.fillRect(node.x, node.y, node.width, node.height);
 		}
+		//Text nodes
+		function renderText(node){
+			app.context.font = '40px arial';
+			app.context.fillStyle = 'white';
+			app.context.fillText(node.text,node.x,node.y);
+		}
+		this.textNodes.forEach(renderText);
 
 		this.lastUpdate = Date.now();
 		this.timestamp+=dt;
@@ -69,13 +77,13 @@ var app = {
 	onUpdate : function(){},
 	
 	reset : function(){		
-		this.nodes = []
+		this.nodes = [];
+		this.textNodes = [];
 		this.onInit();
 	},
 	togglePause : function(){
 		this.paused = !this.paused;
-	}
-
+	},
 };
 
 window.onload = function(){
