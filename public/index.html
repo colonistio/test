@@ -17,6 +17,7 @@
 			BAR_W: 200,
 			BAR_H: 40,
 			PROGRESS_BORDER :3,
+			DUNK_BOUNCES : 10,
 		}
 
 
@@ -79,55 +80,56 @@
 	
 				});
 			}
-				function addSuperpowers(){
-					app.nodes.push({
-						id     : 'outer1',
-						x      : 40,
-						y      : app.canvas.height - constants.MARGIN - constants.BAR_H,
-						width  : constants.BAR_W,
-						height : constants.BAR_H,
-						color  : 'white'
+			function addSuperpowers(){
+				app.nodes.push({
+					id     : 'outer1',
+					x      : 40,
+					y      : app.canvas.height - constants.MARGIN - constants.BAR_H,
+					width  : constants.BAR_W,
+					height : constants.BAR_H,
+					color  : 'white'
 
-					});
-					app.nodes.push({
-						id     : 'outer2',
-						x      : app.canvas.width - 40 - constants.BAR_W,
-						y      : app.canvas.height - constants.MARGIN - constants.BAR_H,
-						width  : constants.BAR_W,
-						height : constants.BAR_H,
-						color  : 'white'
+				});
+				app.nodes.push({
+					id     : 'outer2',
+					x      : app.canvas.width - 40 - constants.BAR_W,
+					y      : app.canvas.height - constants.MARGIN - constants.BAR_H,
+					width  : constants.BAR_W,
+					height : constants.BAR_H,
+					color  : 'white'
 
-					})
-					outer1 = app.getNode('outer1');
-					outer2 = app.getNode('outer2');
-					app.nodes.push({
-						id     : 'progress1',
-						x      : outer1.x + constants.PROGRESS_BORDER, 
-						y      : outer1.y + constants.PROGRESS_BORDER, 
-						width  : outer1.width - constants.PROGRESS_BORDER * 2, 
-						height : outer1.height - constants.PROGRESS_BORDER * 2, 
-						color  : 'black'
-					})
-					app.nodes.push({
-						id     : 'progress2',
-						x      : outer2.x + constants.PROGRESS_BORDER, 
-						y      : outer2.y + constants.PROGRESS_BORDER, 
-						width  : outer2.width - constants.PROGRESS_BORDER * 2, 
-						height : outer2.height - constants.PROGRESS_BORDER * 2, 
-						color  : 'black'
-					})
-					app.textNodes.push({
-						text : 'DUNK!',
-						y : outer1.y - 10,
-						x : outer1.x, 
-					})
-					app.textNodes.push({
-						text : 'DUNK!',
-						y : outer2.y - 10,
-						x : outer2.x, 
-					})
+				})
+				outer1 = app.getNode('outer1');
+				outer2 = app.getNode('outer2');
+				app.nodes.push({
+					id     : 'progress1',
+					x      : outer1.x + constants.PROGRESS_BORDER, 
+					y      : outer1.y + constants.PROGRESS_BORDER, 
+					width  : outer1.width - constants.PROGRESS_BORDER * 2, 
+					height : outer1.height - constants.PROGRESS_BORDER * 2, 
+					color  : 'black',
+					progress : constants.DUNK_BOUNCES,
+				})
+				app.nodes.push({
+					id     : 'progress2',
+					x      : outer2.x + constants.PROGRESS_BORDER, 
+					y      : outer2.y + constants.PROGRESS_BORDER, 
+					width  : outer2.width - constants.PROGRESS_BORDER * 2, 
+					height : outer2.height - constants.PROGRESS_BORDER * 2, 
+					color  : 'black',
+					progress : constants.DUNK_BOUNCES,
+				})
+				app.textNodes.push({
+					text : 'DUNK!',
+					y : outer1.y - 10,
+					x : outer1.x, 
+				})
+				app.textNodes.push({
+					text : 'DUNK!',
+					y : outer2.y - 10,
+					x : outer2.x, 
+				})
 			}
-
 
 
 			addBase();
@@ -151,6 +153,8 @@
 			function moveBall(){
 				p1 = app.getNode('p1');
 				p2 = app.getNode('p2');
+				bar1 = app.getNode('progress1');
+				bar2 = app.getNode('progress2');
 				ball = app.getNode('ball');
 				ball.y += ball.directionY * constants.BALL_SPEED;
 				ball.x += ball.directionX * constants.BALL_SPEED;
@@ -163,36 +167,42 @@
 					ball.y = app.canvas.height - ball.height;
 					
 				}
-				//collision logic. 
-				if (
+				function checkCollision(player){
+					if (
 					//check if there's a collision in:
-					p1.x < ball.x + ball.width &&   //left
-					p1.x + p1.width > ball.x &&     //right
-					p1.y < ball.y + ball.height &&  //bottom 
-					p1.height + p1.y > ball.y       //top 
-					
-					|| ( //repeat for the other object
-					
-					p2.x < ball.x + ball.width &&
-					p2.x + p2.width > ball.x &&
-					p2.y < ball.y + ball.height &&
-					p2.height + p2.y > ball.y
-					
-					)){
-						ball.directionX *= -1; //turn the ball X velocity
+					player.x < ball.x + ball.width &&   //left
+					player.x + player.width > ball.x &&     //right
+					player.y < ball.y + ball.height &&  //bottom 
+					player.height + player.y > ball.y )
+					{
+						ball.directionX *= -1;  //turn the ball X velocity
+						onBallBounce(player);
 					}
-					
-					else if (ball.x < 0){
-						console.log(`player 2 wins. Score: ${app.p1Score}-${++app.p2Score}`);
-						app.reset();
-					}
-					else if (ball.x > app.canvas.width){
-						console.log(`player 1 wins Score: ${++app.p1Score}-${app.p2Score}`);
-						app.reset();
-					}
+
 				}
+				checkCollision(p1);
+				checkCollision(p2);	
+				if (ball.x < 0){
+					console.log(`player 2 wins. Score: ${app.p1Score}-${++app.p2Score}`);
+					app.reset();
+					}
+				else if (ball.x > app.canvas.width){
+					console.log(`player 1 wins Score: ${++app.p1Score}-${app.p2Score}`);
+					app.reset();
+					}
+			}
 
-
+				function onBallBounce(player)
+				{
+					bar1.progress--;
+					bar2.progress--;
+				}
+				function updateBars(id){
+					bar = app.getNode(id);
+					bar.width = (bar.progress / constants.DUNK_BOUNCES) * constants.BAR_W;
+				}
+				updateBars('progress1');
+				updateBars('progress2');
 				movePlayer('p1');
 				movePlayer('p2');
 				moveBall();
