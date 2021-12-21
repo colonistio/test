@@ -1,46 +1,208 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Ping Pong Game</title>
 </head>
+
 <body>
 	<canvas id="canvas" width="800" height="400"></canvas>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
-		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
+		app.onInit = function () {
+			const body = document.querySelector("body");
+			body.style.overflow = 'hidden';
+			body.style.margin = `0`;
+			body.style.height = `${window.innerHeight}px`;
+			this.canvas.width = window.innerWidth;
+			this.canvas.height = window.innerHeight; 
+			this.width = this.canvas.width;
+			this.height = this.canvas.height;
 
-		app.onInit = function(){
+			window.onresize = (e) => {
+				this.canvas.width = e.target.window.innerWidth;
+				this.canvas.height = e.target.window.innerHeight; 
+				this.canvas.style.width = this.canvas.width;
+				this.canvas.style.height = this.canvas.height;
+				this.width = this.canvas.width;
+				this.height = this.canvas.height;
+
+				this.getNode('paddle-right').x = this.canvas.width - 20;
+			}
+
+			document.onkeydown = e => {
+				if (e.key === 'ArrowUp') {
+					this.getNode('paddle-right').direction = -1;
+				}
+
+				if (e.key === 'ArrowDown') {
+					this.getNode('paddle-right').direction = 1;
+				}
+
+				if (e.key === 'w') {
+					this.getNode('paddle-left').direction = -1;
+				}
+
+				if (e.key === 's') {
+					this.getNode('paddle-left').direction = 1;
+				}
+			}
+
+			document.onkeyup = e => {
+				if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+					this.getNode('paddle-right').direction = 0;
+				}
+
+				if (e.key === 'w' || e.key === 's') {
+					this.getNode('paddle-left').direction = 0;
+				}
+
+				if (e.key === ' ') {
+					this.getNode('ball').isPaused = !this.getNode('ball').isPaused;
+				}
+			}
+
 			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
-				y  : 0,
-				width  : 100,
-				height : 100,
-				color  : 'red',
-				direction : 0
+				id: 'paddle-left',
+				x: 10,
+				y: this.canvas.height / 2 - 50,
+				width: 10,
+				height: 100,
+				color: 'red',
+				direction: 0
 			});
 
 			this.nodes.push({
-				id : 'black-box',
-				x  : 50,
-				y  : 0,
-				width  : 150,
-				height : 150,
-				color  : 'black'
+				id: 'paddle-right',
+				x: canvas.width - 20,
+				y: this.canvas.height / 2 - 50,
+				width: 10,
+				height: 100,
+				color: 'magenta',
+				direction: 0
+			});
+
+
+			this.nodes.push({
+				id: 'ball',
+				x: this.canvas.width / 2,
+				y: this.canvas.height / 2,
+				width: 1,
+				height: 1,
+				radius: 10,
+				color: 'blue',
+				directionX: 1,
+				directionY: 1,
+				isPaused: false
+			});
+
+			this.nodes.push({
+				id: 'score',
+				x: 100,
+				y: 20,
+				color: 'black',
+				width: 0,
+				height: 0,
+				valueLeft: 0,
+				valueRight: 0
 			});
 		};
 
-		app.onUpdate = function(time){
-			this.getNode('black-box').y++;
-
-			if(Math.cos(this.timestamp / 100) > 0){
-				this.getNode('red-box').direction = -1;
-			}else{
-				this.getNode('red-box').direction = 1;
+		app.onUpdate = function (time) {
+			const speed = 5;
+			const ball = this.getNode('ball');
+			const score = this.getNode('score');
+			const rPaddle = this.getNode('paddle-right');
+			const lPaddle = this.getNode('paddle-left');
+			const lBounceX = lPaddle.x + lPaddle.width;
+			const rBounceX = rPaddle.x;
+			const lPaddleTop = lPaddle.y;
+			const lPaddleBottom = lPaddle.y + lPaddle.height;
+			const lPaddleMiddle = lPaddle.y + lPaddle.height / 2;
+			const rPaddleTop = rPaddle.y;
+			const rPaddleBottom = rPaddle.y + rPaddle.height;
+			const rPaddleMiddle = rPaddle.y + rPaddle.height / 2;
+			
+			// Initial update - values not set yet
+			if (ball.x === undefined) {
+				return;
 			}
 
-			this.getNode('red-box').x+=this.getNode('red-box').direction;
+			const ballBounceOffLeftPaddle = ((ball.x - ball.radius) <= lBounceX && ball.y >= lPaddleTop && ball.y <= lPaddleBottom);
+			const ballBounceOffRightPaddle = ((ball.x + ball.radius) >= rBounceX && ball.y >= rPaddleTop && ball.y <= rPaddleBottom);
+
+			const ballBounceOffTop = ball.y <= ball.radius;
+			const ballBounceOffBottom = ball.y >= (this.canvas.height - ball.radius);
+
+			const ballGoesOffLeft = ball.x <= 0;
+			const ballGoesOffRight = ball.x >= canvas.width;
+
+			let isReset = false;
+
+			if (ballGoesOffLeft) {
+				score.valueRight++;
+
+				isReset = true;
+			}
+
+			if (ballGoesOffRight) {
+				score.valueLeft++;
+
+				isReset = true;
+			}
+
+			if (isReset) {
+				console.log(`Left: ${score.valueLeft} | Right: ${score.valueRight}`);
+
+				ball.x = canvas.width / 2;
+				ball.y = canvas.height / 2;
+				ball.directionX = Math.random() < 0.5 ? -1 : 1;
+				ball.directionY= Math.random() < 0.5 ? -1 : 1;
+
+				return;
+			}
+
+			if (ballBounceOffTop || ballBounceOffBottom) {
+				ball.directionY = -ball.directionY;
+			}
+
+			if (ballBounceOffLeftPaddle || ballBounceOffRightPaddle) {
+				ball.directionX = -ball.directionX;
+
+				if (ballBounceOffLeftPaddle) {
+					ball.directionY = (ball.y <= lPaddleMiddle) ? -1 : 1;
+				}
+
+				if (ballBounceOffRightPaddle) {
+					ball.directionY = (ball.y <= rPaddleMiddle) ? -1 : 1;
+				}
+			}
+
+			if (!ball.isPaused) {
+				ball.x += ball.directionX * speed;
+				ball.y += ball.directionY * speed;
+
+				rPaddle.y += rPaddle.direction * speed;
+				lPaddle.y += lPaddle.direction * speed;
+
+				const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+				rPaddle.y = clamp(rPaddle.y, 0, this.canvas.height - rPaddle.height);
+				lPaddle.y = clamp(lPaddle.y, 0, this.canvas.height - lPaddle.height);
+			}
+
+			this.context.fillStyle = ball.color;
+			this.context.beginPath();
+			this.context.arc(ball.x, ball.y, 10, 0, Math.PI * 2, true);
+			this.context.fill();
+			this.context.stroke();
+
+			this.context.fillStyle = score.color;
+			this.context.font = '36px arial';
+			this.context.fillText(`Score: ${score.valueLeft}`, 50, 50);
+			this.context.fillText(`Score: ${score.valueRight}`, this.canvas.width - 180, 50);
 		};
 	</script>
 </body>
+
 </html>
