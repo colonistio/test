@@ -38,8 +38,9 @@ Please start server with ```node index.js```.
 ## After Finishing
 - On your repository create a PR merging your feature branch into your master branch.
 - On you PR add a [very good description](https://www.pullrequest.com/blog/writing-a-great-pull-request-description/) on what it is, make sure to include a very short video showcasing what you've made. 
-- Invite collaborators `demiculus` & `goktugyil` to the repo.
-- Request reviews for the PR from `demiculus` & `goktugyil`.
+- Make sure your repository is public
+- Invite collaborators `demiculus`, `goktugyil` & `mayla-g` to the repo.
+- Request reviews for the PR from `demiculus`, `goktugyil` & `mayla-g`.
 
 ## Notes
 - Make sure game has state functions like reset, start and pause. We should be able to trigger them with ```app.reset()``` or ```app.pause()```.
