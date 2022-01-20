@@ -64,6 +64,77 @@ const move_bot = (ball) => {
 };
 
 /**
+ * Function that handles the logic for if the ball hits
+ * either of the paddles
+ *
+ * @param ball: the ball object
+ * @return: void
+ */
+const hit_paddle = (ball) => {
+	// make universal function for if the paddles hit the ball
+	const handle_hit = (current) => {
+		// must be in hittable and in paddle window
+
+		// difference in where the ball is compared to top of paddle
+		const position = ball.y - current.y;
+
+		// split the paddle into 5 parts
+		const length = paddle_height / 5;
+
+		// make the ball bounce off the paddle
+		ball.xv = -ball.xv;
+
+		if (position > length * 4) {
+			// bottom segment
+			ball.yv = ball.xv * 1.2;
+			// ball.yv = max_ball_vertical * 2;
+		} else if (position > length * 3) {
+			// next segment
+			ball.yv = ball.xv * 0.8;
+			// ball.yv = max_ball_vertical * 1.5;
+		} else if (position > length * 2) {
+			// middle segment
+			// do nothing but bounce back
+		} else if (position > length * 1) {
+			// next segment
+			ball.yv = -ball.xv * 0.8;
+			// ball.yv = -max_ball_vertical * 1.5;
+		} else {
+			// top segment
+			ball.yv = -ball.xv * 1.2;
+			// ball.yv = -max_ball_vertical * 2;
+		}
+	};
+
+	// get both of the paddles
+	const user_paddle = app.getNode("player_one");
+	const bot_paddle = app.getNode("bot");
+
+	// check to see if the ball has hit the user paddle
+	if (
+		ball.x - ball_radius < paddle_offset + paddle_width &&
+		ball.x - ball_radius > paddle_offset &&
+		user_paddle.y < ball.y - ball_radius &&
+		user_paddle.y + paddle_height > ball.y + ball_radius
+	) {
+		// incrememnt the user's hit counter
+		++hits;
+
+		handle_hit(user_paddle);
+	}
+
+	// if the ball hit the bot's paddle
+	else if (
+		ball.x - ball_radius > app.width - paddle_offset - paddle_width &&
+		ball.x - ball_radius < app.width - paddle_offset &&
+		bot_paddle.y + paddle_height > ball.y - ball_radius &&
+		bot_paddle.y < ball.y + ball_radius
+	) {
+		handle_hit(bot_paddle);
+	}
+};
+
+/**
  * Function that handles each time the game restarts.
  *
  * Cases for this:
