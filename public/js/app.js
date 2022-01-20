@@ -19,10 +19,27 @@ var app = {
 	lastUpdate: 0,
 
 	init: function () {
+		// reset the variables in case starting again
+		window.cancelAnimationFrame(this.request_id);
+		this.nodes = [];
+		this.width = window.innerWidth;
+		this.height = window.innerHeight;
+		this.timestamp = 0;
+		this.now = 0;
+		this.lastUpdate = 0;
+
+		// set the canvas object and make it the height and width of the screen
 		this.canvas = document.getElementById("canvas");
+		this.canvas.width = this.width;
+		this.canvas.height = this.height;
+
+		// make the 2d context for the canvas
 		this.context = this.canvas.getContext("2d");
 
+		// start the animating
 		this.render();
+
+		// initialize the variables needed for the animation
 		this.onInit();
 	},
 	render: function () {
