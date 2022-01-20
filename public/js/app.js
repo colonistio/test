@@ -59,17 +59,32 @@ var app = {
 		this.context.clearRect(0, 0, this.width, this.height);
 	},
 	update: function () {
+		// make local variable to document how much time has passed
 		var dt = Date.now() - this.lastUpdate;
 
+		// calls the updater function that we created
 		this.onUpdate(dt);
 
+		// iterate through all of the nodes and draw them to the screen
 		for (var index in this.nodes) {
+			// get the current node
 			var node = this.nodes[index];
 
+			// get the fill style of the node
 			this.context.fillStyle = node.color;
-			this.context.fillRect(node.x, node.y, node.width, node.height);
+
+			// draw each of the objects
+			this.context.beginPath();
+			if (node.type === "paddle") {
+				this.context.fillRect(node.x, node.y, node.width, node.height);
+			} else {
+				this.context.arc(node.x, node.y, node.radius, 0, 360, false);
+				this.context.fill();
+			}
+			this.context.closePath();
 		}
 
+		// update function to have most updated timestamp
 		this.lastUpdate = Date.now();
 		this.timestamp += dt;
 	},
