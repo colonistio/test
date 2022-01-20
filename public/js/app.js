@@ -3,6 +3,9 @@ var app = {
 	canvas: null,
 	context: null,
 
+	// id of the animation frame, needed if window resizes
+	request_id: null,
+
 	//resizing
 	width: 800,
 	height: 400,
@@ -26,7 +29,8 @@ var app = {
 		this.clear();
 		this.update();
 
-		window.requestAnimationFrame(this.render.bind(this));
+		// get the animation request in case we need to cancel animation
+		this.request_id = window.requestAnimationFrame(this.render.bind(this));
 	},
 	clear: function () {
 		this.context.clearRect(0, 0, this.width, this.height);
