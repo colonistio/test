@@ -43,6 +43,26 @@ app.onUpdate = function (time) {
 	// update the bots position
 	move_bot(ball);
 };
+
+/**
+ * Function that updates the bot's location so that it doesn't miss the ball
+ *
+ * @return: void
+ */
+const move_bot = (ball) => {
+	// get the bot and calculate the middle of the paddle
+	const bot = app.getNode("bot");
+	const bot_middle = bot.y + paddle_height / 2;
+
+	// get the difference in the position of the ball vs bot
+	let difference = bot_middle - ball.y;
+
+	// if the ball is above the middle of the bot
+	if (difference > 0) bot.y -= bot_increment;
+	// if the ball is below the middle of the bot
+	else bot.y += bot_increment;
+};
+
 /**
  * Function that handles each time the game restarts.
  *
