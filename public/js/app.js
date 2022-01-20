@@ -42,14 +42,20 @@ var app = {
 		// initialize the variables needed for the animation
 		this.onInit();
 	},
+
 	render: function () {
+		// makke the clear rectangle
 		this.clear();
+
+		// updates the objects on the screen
 		this.update();
 
 		// get the animation request in case we need to cancel animation
 		this.request_id = window.requestAnimationFrame(this.render.bind(this));
 	},
+
 	clear: function () {
+		// clear rectangle over the entire screen
 		this.context.clearRect(0, 0, this.width, this.height);
 	},
 	update: function () {
@@ -67,15 +73,19 @@ var app = {
 		this.lastUpdate = Date.now();
 		this.timestamp += dt;
 	},
+
 	getNode: function (id) {
+		// iterate over all of the nodes
 		for (var index in this.nodes) {
 			var node = this.nodes[index];
 
+			// return if found the node we are looking for
 			if (node.id == id) {
 				return node;
 			}
 		}
 
+		// if not found, return null object
 		return { x: null, y: null, width: null, height: null };
 	},
 
@@ -84,6 +94,6 @@ var app = {
 	onUpdate: function () {},
 };
 
-window.onload = function () {
-	app.init();
-};
+// make the startup and resize functions
+window.onload = () => app.init();
+window.onresize = () => app.init();
