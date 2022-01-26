@@ -20,3 +20,4 @@ jobs:
           pr-comment: >
             This repository does not accept pull requests,
             see the README for details.
+          exclude-pr-labels: 'pinned'
