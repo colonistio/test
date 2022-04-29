@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Ping Pong Game</title>
+	<style> canvas {position:fixed; width: 100%; height: 100%;} </style>
 </head>
 <body>
 	<canvas id="canvas" width="800" height="400"></canvas>
@@ -9,25 +10,94 @@
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
+
+		let leftPlayerDown=0
+		let leftPlayerUp=0
+		let rightPlayerDown=0
+		let rightPlayerUp=0
+		let paused= false;
+		let started=false;
+
 		app.onInit = function(){
+			this.canvas=document.getElementById("canvas");
+
+			
 			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
-				y  : 0,
-				width  : 100,
-				height : 100,
-				color  : 'red',
-				direction : 0
+				id:"left-player",
+				x: canvas.width / 80,
+				y: canvas.height / 2 - (canvas.height * 0.2) / 2,
+				width: canvas.width * 0.01,
+				height: canvas.height * 0.2,
+				color: "green",
 			});
 
 			this.nodes.push({
-				id : 'black-box',
-				x  : 50,
-				y  : 0,
-				width  : 150,
-				height : 150,
-				color  : 'black'
+				id: "right-player",
+				x: canvas.width - (canvas.width / 80 + canvas.width * 0.01),
+				y: canvas.height / 2 - (canvas.height * 0.2) / 2,
+				width: canvas.width * 0.01,
+				height: canvas.height * 0.2,
+				color: "green",
 			});
+			this.nodes.push({
+				id: "ball",
+				x: canvas.width / 2,
+				y: canvas.height / 2,
+				width: this.getNode("left-player").width,
+				height: this.getNode("left-player").width,
+				color: "green",
+				direction: 0,
+				// xDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1),
+				// yDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1)
+
+			});
+
+
+
+			//moving paddles with keys SHOULD REMOVE OR STATEMENTS
+			document.addEventListener("keydown", (e) => {
+          		switch (true) {
+					// case e.keyCode == 32:
+					// 	app.pause();
+					// break;
+					// case e.keyCode == 82:
+					// 	app.reset();
+					// break;
+					case e.keyCode == 87:
+						leftPlayerDown -= 3;
+					break;
+					case e.keyCode == 83:
+						leftPlayerUp += 3;
+					break;
+					case e.keyCode == 38:
+						rightPlayerDown -= 3;
+					break;
+					case e.keyCode == 40:
+						rightPlayerUp += 3;
+					break;
+          }
+        });
+
+        document.addEventListener("keyup", (e) => {
+          switch (e.keyCode) {
+            case 87:
+              speedOfPaddle1 = 0;
+              break;
+            case 83:
+              speedOfPaddle1 = 0;
+              break;
+            case 38:
+              speedOfPaddle2 = 0;
+              break;
+            case 40:
+              speedOfPaddle2 = 0;
+              break;
+          }
+        });
+
+
+
+		
 		};
 
 		app.onUpdate = function(time){
