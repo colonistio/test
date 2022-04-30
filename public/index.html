@@ -25,7 +25,7 @@
 			
 			this.nodes.push({
 				id:"left-player",
-				x: (this.canvas.width / 8),
+				x: (this.canvas.width / 32),
 				y: (this.canvas.height / 2) - 35,
 				width: canvas.width * 0.01,
 				height: canvas.height * 0.2,
@@ -34,7 +34,7 @@
 
 			this.nodes.push({
 				id: "right-player",
-				x: this.canvas.width - (this.canvas.width / 8),
+				x: this.canvas.width - (this.canvas.width / 22),
 				y: (this.canvas.height / 2) - 35,
 				width: canvas.width * 0.01,
 				height: canvas.height * 0.2,
@@ -47,49 +47,37 @@
 				width: this.getNode("left-player").width,
 				height: this.getNode("left-player").width,
 				color: "green",
-				velX: 5,
-				velY: 5,
-				speed: 5,
-				// xDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1),
-				// yDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1)
+				xDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1),
+				yDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1),
 
 			});
+
 
 			function restart(){
 				ball.x = canvas.width
 			}
 
 
-
-			//moving paddles with keys SHOULD REMOVE OR STATEMENTS
-			document.addEventListener("keydown", (e) => {
-				if(e.keyCode==87){
-					leftPlayerUp=true;
-					leftPlayerDown=false;
-				}if(e.keyCode==83){
-					leftPlayerUp=false;
-					leftPlayerDown=true;
-				}if(e.keyCode==38){
-					rightPlayerUp=true;
-					rightPlayerDown=false;
-				}if(e.keyCode==40){
-					rightPlayerUp=false;
-					rightPlayerDown=true;
-				}
-        });
-
 		document.addEventListener("keydown", (e) => {
+				if(e.keyCode==32){
+					app.pause();
+				
+				}
+				if(e.keyCode==82){
+					app.restart();
+				
+				}
 				if(e.keyCode==87){
-					this.getNode("left-player").y -= 10;
+					this.getNode("left-player").y -= 17;
 				
 				}if(e.keyCode==83){
-					this.getNode("left-player").y += 10;
+					this.getNode("left-player").y += 17;
 
 				}if(e.keyCode==38){
-					this.getNode("right-player").y -= 10;
+					this.getNode("right-player").y -= 17;
 
 				}if(e.keyCode==40){
-					this.getNode("right-player").y += 10;
+					this.getNode("right-player").y += 17;
 
 				}
         });
@@ -101,7 +89,21 @@
 			rightPlayerDown=false;
         });
 
+		app.updateBall= function(){
+		this.getNode("ball").x += this.getNode("ball").xDirSpeed;
+		this.getNode("ball").y += this.getNode("ball").yDirSpeed;
 
+			
+		if (this.getNode("ball").y <=0) { //hitting the bottom wall
+			this.getNode("ball").y = 1
+		} 
+		if (this.getNode("ball").y >= this.canvas.height - this.getNode("ball").height) { //hitting the top wall
+			this.getNode("ball").y = this.canvas.height - this.getNode("ball").height -1
+		}
+		//move the ball
+		// if (!paused){
+		// 	this.getNode("ball").
+		// }
 
 		
 		};
@@ -116,7 +118,18 @@
 			}
 
 			this.getNode('red-box').x+=this.getNode('red-box').direction;
+
+			
+
 		};
+
+		function loop(){
+			app.updateBall();
+			requestAnimationFrame(app.onInit);
+
+		}
+		loop();
+	};
 	</script>
 </body>
 </html>
