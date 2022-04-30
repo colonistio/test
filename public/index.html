@@ -11,12 +11,13 @@
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
 
-		let leftPlayerDown=0
-		let leftPlayerUp=0
-		let rightPlayerDown=0
-		let rightPlayerUp=0
+		let leftPlayerDown=false;
+		let leftPlayerUp=false;
+		let rightPlayerDown=false;
+		let rightPlayerUp=false;
 		let paused= false;
 		let started=false;
+
 
 		app.onInit = function(){
 			this.canvas=document.getElementById("canvas");
@@ -24,8 +25,8 @@
 			
 			this.nodes.push({
 				id:"left-player",
-				x: canvas.width / 80,
-				y: canvas.height / 2 - (canvas.height * 0.2) / 2,
+				x: (this.canvas.width / 8),
+				y: (this.canvas.height / 2) - 35,
 				width: canvas.width * 0.01,
 				height: canvas.height * 0.2,
 				color: "green",
@@ -33,8 +34,8 @@
 
 			this.nodes.push({
 				id: "right-player",
-				x: canvas.width - (canvas.width / 80 + canvas.width * 0.01),
-				y: canvas.height / 2 - (canvas.height * 0.2) / 2,
+				x: this.canvas.width - (this.canvas.width / 8),
+				y: (this.canvas.height / 2) - 35,
 				width: canvas.width * 0.01,
 				height: canvas.height * 0.2,
 				color: "green",
@@ -46,53 +47,58 @@
 				width: this.getNode("left-player").width,
 				height: this.getNode("left-player").width,
 				color: "green",
-				direction: 0,
+				velX: 5,
+				velY: 5,
+				speed: 5,
 				// xDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1),
 				// yDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1)
 
 			});
 
+			function restart(){
+				ball.x = canvas.width
+			}
+
 
 
 			//moving paddles with keys SHOULD REMOVE OR STATEMENTS
 			document.addEventListener("keydown", (e) => {
-          		switch (true) {
-					// case e.keyCode == 32:
-					// 	app.pause();
-					// break;
-					// case e.keyCode == 82:
-					// 	app.reset();
-					// break;
-					case e.keyCode == 87:
-						leftPlayerDown -= 3;
-					break;
-					case e.keyCode == 83:
-						leftPlayerUp += 3;
-					break;
-					case e.keyCode == 38:
-						rightPlayerDown -= 3;
-					break;
-					case e.keyCode == 40:
-						rightPlayerUp += 3;
-					break;
-          }
+				if(e.keyCode==87){
+					leftPlayerUp=true;
+					leftPlayerDown=false;
+				}if(e.keyCode==83){
+					leftPlayerUp=false;
+					leftPlayerDown=true;
+				}if(e.keyCode==38){
+					rightPlayerUp=true;
+					rightPlayerDown=false;
+				}if(e.keyCode==40){
+					rightPlayerUp=false;
+					rightPlayerDown=true;
+				}
+        });
+
+		document.addEventListener("keydown", (e) => {
+				if(e.keyCode==87){
+					this.getNode("left-player").y -= 10;
+				
+				}if(e.keyCode==83){
+					this.getNode("left-player").y += 10;
+
+				}if(e.keyCode==38){
+					this.getNode("right-player").y -= 10;
+
+				}if(e.keyCode==40){
+					this.getNode("right-player").y += 10;
+
+				}
         });
 
         document.addEventListener("keyup", (e) => {
-          switch (e.keyCode) {
-            case 87:
-              speedOfPaddle1 = 0;
-              break;
-            case 83:
-              speedOfPaddle1 = 0;
-              break;
-            case 38:
-              speedOfPaddle2 = 0;
-              break;
-            case 40:
-              speedOfPaddle2 = 0;
-              break;
-          }
+			leftPlayerUp=false;
+			leftPlayerDown=false;
+			rightPlayerUp=false;
+			rightPlayerDown=false;
         });
 
 
