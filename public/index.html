@@ -77,10 +77,6 @@
 
 			});
 
-			function restart(){
-				ball.x = canvas.width
-			}
-
 
 		document.addEventListener("keydown", (e) => {
 				
@@ -115,6 +111,11 @@
 				pause=false;
 			}
 
+		};
+
+		app.restart=function(){
+				this.getNode("ball").x = canvas.width/2
+				this.getNode("ball").y = canvas.height/2
 		};
 
 
@@ -157,9 +158,13 @@
 			} 
 			//Scoring conditions
 			if (this.getNode("ball").x < 0) {
+			
             console.log("Right Player Score: "+rightScore++);
+			app.restart();
         	} else if (this.getNode("ball").x + this.getNode("ball").width > WIDTH) {
+			
             console.log('Left Player Score:'+leftScore++);
+			app.restart();
         	}
 			
 		};
