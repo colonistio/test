@@ -29,6 +29,13 @@
 			let ballYCoord=this.getNode("ball").y
 			let ballXSpeed=this.getNode("ball").xDirSpeed
 			let ballYSpeed=this.getNode("ball").yDirSpeed
+			let ballWidth=this.getNode("ball").width
+			let leftXCoord=this.getNode("left-player").x
+			let leftYCoord=this.getNode("left-player").y
+			let rightXCoord=this.getNode("right-player").x
+			let rightYCoord=this.getNode("right-player").y
+			let playerWidth=this.getNode("left-player").width
+			let playerHeight=this.getNode("left-player").height
 
 			
 			this.nodes.push({
@@ -76,11 +83,6 @@
 				
 
 			});
-
-			window.onload = function(){
-
-			setInterval(loop, 100/50);
-			};
 
 			function ballMove(){
 				ballXCoord = ballXCoord+ ballXSpeed;
@@ -132,16 +134,34 @@
 			return(ent)
 		}
 
+		app.bumper= function() {
+			this.getNode('ball').x+=this.getNode('ball').xDirSpeed;
 
-		function ballMovement(){
-			// let ballXCoord=this.getNode("ball").x
-			// let ballYCoord=this.getNode("ball").y
-			// let ballXSpeed=this.getNode("ball").xDirSpeed
-			// let ballYSpeed=this.getNode("ball").yDirSpeed
+			this.getNode('ball').y+=this.getNode('ball').yDirSpeed;
 
-			ballXCoord += ballXSpeed;
-			ballYCoord += ballYSpeed;
+			if (this.getNode("ball").y <0) { 
+			this.getNode("ball").yDirSpeed *= -1;
+			} 
+			if ((this.getNode("ball").y > HEIGHT- this.getNode("ball").height)) { 
+			this.getNode("ball").yDirSpeed *= -1;
+			}
+			if ( this.getNode("ball").x - this.getNode("ball").width <= this.getNode("left-player").x 
+			&& this.getNode("ball").y - (this.getNode("ball").height/2)<= this.getNode("left-player").y + (this.getNode("left-player").height)
+			&& this.getNode("ball").y + (this.getNode("ball").height/2)>= this.getNode("left-player").y ) { 
+			//console.log("hit");
+			this.getNode("ball").xDirSpeed *= -1;
+			} 
+			
+			if ( this.getNode("ball").x + this.getNode("ball").width >= this.getNode("right-player").x 
+			&& this.getNode("ball").y - (this.getNode("ball").height/2)<= this.getNode("right-player").y + (this.getNode("right-player").height)
+			&& this.getNode("ball").y + (this.getNode("ball").height/2)>= this.getNode("right-player").y) { 
+			//console.log("hit");
+			this.getNode("ball").xDirSpeed *= -1;
+			} 
+			
 		}
+
+		
 
 		app.updateBall= function(){
 		//this.getNode("ball").x += this.getNode("ball").xDirSpeed;
@@ -183,71 +203,23 @@
         }
     }
     }
-		//move the ball
-		// if (!paused){
-		// 	this.getNode("ball").
-		// }
-
+		
 		
 		};
+		
 
 		app.onUpdate = function(time){
-			//this.getNode('ball').yDirSpeed++;
-			//this.getNode('ball').xDirSpeed++;
-			// this.getNode('ball').yDirSpeed+=this.getNode('ball').y;
-			// this.getNode('ball').xDirSpeed+=this.getNode('ball').x;
-			//this.updateBall();
+			
 			//this.getNode('ball').y--
 			//this.getNode('ball').x--
-			//ballMovement();
-			
+			this.bumper();
 
+			// this.getNode('ball').x+=this.getNode('ball').xDirSpeed;
 
-
-			if(Math.cos(this.timestamp / 100) > 0){
-				this.getNode('red-box').direction = -1;
-			}else{
-				this.getNode('red-box').direction = 1;
-			}
-
-			this.getNode('red-box').x+=this.getNode('red-box').direction;
-
-			// if(Math.cos(this.timestamp / 100) > 0){
-			// 	this.getNode('ball').xDirSpeed = -1;
-			// }else{
-			// 	this.getNode('ball').xDirSpeed = 1;
-			// }
-
-			if (this.getNode("ball").y <0) { 
-			this.getNode("ball").yDirSpeed *= -1;
-			} 
-			if ((this.getNode("ball").y > HEIGHT- this.getNode("ball").height)) { 
-			this.getNode("ball").yDirSpeed *= -1;
-			}
-
-			this.getNode('ball').x+=this.getNode('ball').xDirSpeed;
-
-			// if(Math.cos(this.timestamp / 100) > 0){
-			// 	this.getNode('ball').yDirSpeed = -1;
-			// }else{
-			// 	this.getNode('ball').yDirSpeed = 1;
-			// }
-
-			this.getNode('ball').y+=this.getNode('ball').yDirSpeed;
-
-			
+			// this.getNode('ball').y+=this.getNode('ball').yDirSpeed;
 
 		};
 
-		function loop(){
-			//this.draw(context);
-			//app.updateBall();
-			//requestAnimationFrame(app.onInit);
-			ballMove()
-			
-
-		}
-		loop();
 	};
 	</script>
 </body>
