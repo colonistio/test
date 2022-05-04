@@ -11,14 +11,13 @@
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
 
-		let leftPlayerDown=false;
-		let leftPlayerUp=false;
-		let rightPlayerDown=false;
-		let rightPlayerUp=false;
-		let paused= false;
+
+		let pause= false;
 		let started=false;
 		let WIDTH=canvas.width;
 		let HEIGHT=canvas.height;
+		let rightScore=0;
+		let leftScore=0;
 		
 
 
@@ -84,9 +83,6 @@
 
 			});
 
-			function ballMove(){
-				ballXCoord = ballXCoord+ ballXSpeed;
-			}
 
 
 			function restart(){
@@ -95,10 +91,7 @@
 
 
 		document.addEventListener("keydown", (e) => {
-				if(e.keyCode==32){
-					app.pause();
 				
-				}
 				if(e.keyCode==82){
 					app.restart();
 				
@@ -115,24 +108,28 @@
 				}if(e.keyCode==40){
 					this.getNode("right-player").y += 17;
 
+				}if(e.keyCode==32&&pause==false){
+					pause===true;
+					console.log("yeehaw"+ pause)
+				
+				}else if(e.keyCode==32&&pause==true){
+					pause===false;
+					console.log("yeehaw"+ pause)
 				}
         });
 
-        document.addEventListener("keyup", (e) => {
-			leftPlayerUp=false;
-			leftPlayerDown=false;
-			rightPlayerUp=false;
-			rightPlayerDown=false;
-        });
 
 		function posOrNeg(){
 			var ent = (Math.floor(Math.random() * 2)+1)
-			if (ent == 2)
+			if (ent == 2){
 				ent = -1
-			if (ent == 1)
+			}
+			if (ent == 1){
 				ent = 1
+			}
 			return(ent)
 		}
+
 
 		app.bumper= function() {
 			this.getNode('ball').x+=this.getNode('ball').xDirSpeed;
@@ -145,6 +142,7 @@
 			if ((this.getNode("ball").y > HEIGHT- this.getNode("ball").height)) { 
 			this.getNode("ball").yDirSpeed *= -1;
 			}
+			//Paddle Collissions
 			if ( this.getNode("ball").x - this.getNode("ball").width <= this.getNode("left-player").x 
 			&& this.getNode("ball").y - (this.getNode("ball").height/2)<= this.getNode("left-player").y + (this.getNode("left-player").height)
 			&& this.getNode("ball").y + (this.getNode("ball").height/2)>= this.getNode("left-player").y ) { 
@@ -158,65 +156,21 @@
 			//console.log("hit");
 			this.getNode("ball").xDirSpeed *= -1;
 			} 
+			//Scoring conditions
+			if (this.getNode("ball").x < 0) {
+            console.log("Right Player Score: "+rightScore++);
+        	} else if (this.getNode("ball").x + this.getNode("ball").width > WIDTH) {
+            console.log('Left Player Score:'+leftScore++);
+        	}
 			
 		}
-
-		
-
-		app.updateBall= function(){
-		//this.getNode("ball").x += this.getNode("ball").xDirSpeed;
-		//this.getNode("ball").y += this.getNode("ball").yDirSpeed;
-		this.getNode('ball').y++
-		// this.getNode('ball').x--
-
-
-		//Ball Boundaries
-		if (this.getNode("ball").y <0) { 
-			this.getNode("ball").yDirSpeed *= -1;
-		} 
-		if ((this.getNode("ball").y > HEIGHT- this.getNode("ball").height)) { 
-			this.getNode("ball").yDirSpeed *= -1;
-		}
-		//Scoring Conditions
-		if (this.getNode("ball").x  - this.getNode("ball").width < 0 || this.getNode("ball").x + this.getNode("ball").width > WIDTH) { //point is scored by either computer or player
-        if (this.getNode("ball").x < 0) {
-            console.log('Right Player wins !');
-        } else if (this.getNode("ball").x + this.getNode("ball").width > WIDTH) {
-            console.log('Left Player wins !');
-        }
-        this.xSpeed = 0;
-        this.ySpeed = 3;
-        this.x = WIDTH / 2;
-        this.y = HEIGHT / 2;
-		//Player Collissions
-		if (this.x >  HEIGHT/ 2) {
-        if ((this.getNode("ball").y + this.getNode("ball").width) > this.getNode("left-player").y  && (this.getNode("ball").y - this.getNode("ball").width) < this.getNode("left-player").y && (this.x - this.radius) < (player_paddle.x + player_paddle.width) && (this.x + this.radius) > player_paddle.x) {
-            this.ySpeed = -this.ySpeed;
-            this.xSpeed += (player_paddle.xSpeed / 2);
-            this.y += this.ySpeed;
-        }
-    } else {
-        if ((this.y - this.radius) < (computer_paddle.y + computer_paddle.height) && (this.y + this.radius) > computer_paddle.y && (this.x - this.radius) < (computer_paddle.x + computer_paddle.width) && (this.x + this.radius) > computer_paddle.x) {
-            this.ySpeed = -this.ySpeed;
-            this.x += (computer_paddle.xSpeed / 2);
-            this.y += this.ySpeed;
-        }
-    }
-    }
-		
-		
-		};
 		
 
 		app.onUpdate = function(time){
 			
 			//this.getNode('ball').y--
 			//this.getNode('ball').x--
-			this.bumper();
-
-			// this.getNode('ball').x+=this.getNode('ball').xDirSpeed;
-
-			// this.getNode('ball').y+=this.getNode('ball').yDirSpeed;
+			if(pause==false){this.bumper()}
 
 		};
 
