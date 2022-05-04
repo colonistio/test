@@ -10,8 +10,6 @@
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
-
-
 		let pause= false;
 		let started=false;
 		let WIDTH=canvas.width;
@@ -19,8 +17,6 @@
 		let rightScore=0;
 		let leftScore=0;
 		
-
-
 		app.onInit = function(){
 			this.canvas=document.getElementById("canvas");
 
@@ -44,16 +40,6 @@
 				width: canvas.width * 0.01,
 				height: canvas.height * 0.2,
 				color: "green",
-			});
-
-			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
-				y  : 0,
-				width  : 100,
-				height : 100,
-				color  : 'red',
-				direction : 0
 			});
 
 			this.nodes.push({
@@ -85,16 +71,16 @@
 				
 				}
 				if(e.keyCode==87 && pause==false){
-					this.getNode("left-player").y -= 17;
+					this.getNode("left-player").y -= 41;
 				
 				}if(e.keyCode==83 && pause==false){
-					this.getNode("left-player").y += 17;
+					this.getNode("left-player").y += 41;
 
 				}if(e.keyCode==38 && pause==false){
-					this.getNode("right-player").y -= 17;
+					this.getNode("right-player").y -= 41;
 
 				}if(e.keyCode==40 && pause==false){
-					this.getNode("right-player").y += 17;
+					this.getNode("right-player").y += 41;
 
 				}if(e.keyCode==32){
 					app.pause();
@@ -142,14 +128,27 @@
 			if ((this.getNode("ball").y > HEIGHT- this.getNode("ball").height)) { 
 			this.getNode("ball").yDirSpeed *= -1;
 			}
+			//Paddle Bounds
+			if(this.getNode("left-player").y <= 0){
+				this.getNode("left-player").y = 0;
+			}else if(this.getNode("left-player").y >= HEIGHT - this.getNode("left-player").height){
+				this.getNode("left-player").y = HEIGHT - this.getNode("left-player").height
+			}
+			if(this.getNode("right-player").y <= 0){
+				this.getNode("right-player").y = 0;
+			}else if(this.getNode("right-player").y>= HEIGHT - this.getNode("right-player").height/2){
+				this.getNode("right-player").y = HEIGHT - this.getNode("right-player").height
+			}
+			
 			//Paddle Collissions
+			//Left player Paddle
 			if ( this.getNode("ball").x - this.getNode("ball").width <= this.getNode("left-player").x 
 			&& this.getNode("ball").y - (this.getNode("ball").height/2)<= this.getNode("left-player").y + (this.getNode("left-player").height)
 			&& this.getNode("ball").y + (this.getNode("ball").height/2)>= this.getNode("left-player").y ) { 
 			//console.log("hit");
 			this.getNode("ball").xDirSpeed *= -1;
 			} 
-			
+			//Right player Paddle
 			if ( this.getNode("ball").x + this.getNode("ball").width >= this.getNode("right-player").x 
 			&& this.getNode("ball").y - (this.getNode("ball").height/2)<= this.getNode("right-player").y + (this.getNode("right-player").height)
 			&& this.getNode("ball").y + (this.getNode("ball").height/2)>= this.getNode("right-player").y) { 
@@ -162,7 +161,6 @@
             console.log("Right Player Score: "+rightScore++);
 			app.restart();
         	} else if (this.getNode("ball").x + this.getNode("ball").width > WIDTH) {
-			
             console.log('Left Player Score:'+leftScore++);
 			app.restart();
         	}
@@ -171,10 +169,10 @@
 		
  
 		app.onUpdate = function(time){
-			
-			//this.getNode('ball').y--
-			//this.getNode('ball').x--
-			if(pause==false){this.bumper()}
+
+		if(pause==false){
+			this.bumper()
+		}
 
 		};
 
