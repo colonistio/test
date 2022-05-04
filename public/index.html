@@ -74,16 +74,8 @@
 				color: "green",
 				xDirSpeed: (4*posOrNeg()),
 				yDirSpeed: (4*posOrNeg()),
-				// xDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1),
-				// yDirSpeed: Math.random()<0.5?(Math.floor(Math.random()* 3)+1) : -(Math.floor(Math.random()*3)+1),
-				// xDirSpeed: 1,
-				// yDirSpeed: 1,
-
-				
 
 			});
-
-
 
 			function restart(){
 				ball.x = canvas.width
@@ -96,27 +88,34 @@
 					app.restart();
 				
 				}
-				if(e.keyCode==87){
+				if(e.keyCode==87 && pause==false){
 					this.getNode("left-player").y -= 17;
 				
-				}if(e.keyCode==83){
+				}if(e.keyCode==83 && pause==false){
 					this.getNode("left-player").y += 17;
 
-				}if(e.keyCode==38){
+				}if(e.keyCode==38 && pause==false){
 					this.getNode("right-player").y -= 17;
 
-				}if(e.keyCode==40){
+				}if(e.keyCode==40 && pause==false){
 					this.getNode("right-player").y += 17;
 
-				}if(e.keyCode==32&&pause==false){
-					pause===true;
-					console.log("yeehaw"+ pause)
+				}if(e.keyCode==32){
+					app.pause();
 				
-				}else if(e.keyCode==32&&pause==true){
-					pause===false;
-					console.log("yeehaw"+ pause)
 				}
+				
         });
+
+		app.pause= function(){
+			console.log("Gab");
+			if(pause==false){
+				pause=true;
+			}else if(pause==true){
+				pause=false;
+			}
+
+		};
 
 
 		function posOrNeg(){
@@ -128,7 +127,7 @@
 				ent = 1
 			}
 			return(ent)
-		}
+		};
 
 
 		app.bumper= function() {
@@ -163,9 +162,9 @@
             console.log('Left Player Score:'+leftScore++);
         	}
 			
-		}
+		};
 		
-
+ 
 		app.onUpdate = function(time){
 			
 			//this.getNode('ball').y--
