@@ -116,6 +116,19 @@
 			return(ent)
 		};
 
+		app.drawLScore= function(){
+			this.context.fillStyle= "green";
+			this.context.font = "45px Arial";
+			this.context.fillText(leftScore,WIDTH/2-WIDTH/17, HEIGHT/7 );
+		};
+
+		app.drawRScore= function(){
+			this.context.fillStyle= "green";
+			this.context.font = "45px Arial";
+			this.context.fillText(rightScore,WIDTH/2+WIDTH/25,HEIGHT/7 );
+		};
+
+
 
 		app.bumper= function() {
 			this.getNode('ball').x+=this.getNode('ball').xDirSpeed;
@@ -136,7 +149,7 @@
 			}
 			if(this.getNode("right-player").y <= 0){
 				this.getNode("right-player").y = 0;
-			}else if(this.getNode("right-player").y>= HEIGHT - this.getNode("right-player").height/2){
+			}else if(this.getNode("right-player").y>= HEIGHT - this.getNode("right-player").height){
 				this.getNode("right-player").y = HEIGHT - this.getNode("right-player").height
 			}
 			
@@ -157,11 +170,12 @@
 			} 
 			//Scoring conditions
 			if (this.getNode("ball").x < 0) {
-			
-            console.log("Right Player Score: "+rightScore++);
+			rightScore++
+            console.log("Right Player Score: "+rightScore);
 			app.restart();
         	} else if (this.getNode("ball").x + this.getNode("ball").width > WIDTH) {
-            console.log('Left Player Score:'+leftScore++);
+			leftScore++
+            console.log('Left Player Score:'+leftScore);
 			app.restart();
         	}
 			
@@ -173,6 +187,8 @@
 		if(pause==false){
 			this.bumper()
 		}
+		this.drawLScore();
+		this.drawRScore();
 
 		};
 
