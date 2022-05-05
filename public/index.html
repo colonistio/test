@@ -10,8 +10,7 @@
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
-		let pause= false;
-		let started=false;
+		let pause= true;
 		let WIDTH=canvas.width;
 		let HEIGHT=canvas.height;
 		let rightScore=0;
@@ -119,7 +118,7 @@
 		app.drawLScore= function(){
 			this.context.fillStyle= "green";
 			this.context.font = "45px Arial";
-			this.context.fillText(leftScore,WIDTH/2-WIDTH/17, HEIGHT/7 );
+			this.context.fillText(leftScore,WIDTH/2-WIDTH/14, HEIGHT/7 );
 		};
 
 		app.drawRScore= function(){
